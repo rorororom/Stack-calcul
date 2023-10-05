@@ -12,13 +12,25 @@ enum {
     SIN, //7
     COS, //8
     OUT, //9
-    HLT = -1
+    IN, //10
+    POP, //11
+    HLT = -1,
+    PUSH_R = 33,
+    RAX = 101,
+    RBX = 102,
+    RCX = 103,
+    RDX = 104,
+
 };
 
 struct Cpu {
     struct Stack myStack;
     const char *filename;
     FILE *outputfile;
+    int rax;
+    int rbx;
+    int rcx;
+    int rdx;
 };
 
 #define FORMAT_SPECIFIER(type) _Generic((type), \
@@ -28,11 +40,8 @@ struct Cpu {
     char*: "%s" \
 )
 
-int SravnenieV1 (char string[], struct Stack* myStack);
-int PrintfStack (struct Stack* myStack);
-int Compiler(struct Cpu* myCpu);
 void Cpu(struct Cpu* myCpu);
 int CheckStackSizeForOperation (struct Stack* myStack);
-int CommandToCode(const char* command);
-void ReverseCompiler(FILE* inputFile, FILE* outputFile);
-
+int call_arg (struct Cpu* myCpu, char arg_rAx[]);
+void pop_arg (struct Cpu* myCpu, int code);
+Elem_t return_arg (struct Cpu* myCpu, int code);
