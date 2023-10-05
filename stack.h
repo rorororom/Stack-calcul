@@ -1,105 +1,31 @@
 #ifndef STACK
 #define STACK
 
-#include <cstdint>
-
-/**
- * @brief class type for stack
- *
- *
- * this class stores the data type for working with the stack
- */
 typedef int Elem_t;
+typedef int Canary_t;
 
-/**
- * @brief class type for canary
- *
- *
- * this class stores the data type for working with the canary
- */
-typedef unsigned long long Canary_t;
-
-/**
- * @brief array size constant
- *
- *
- * this constant denotes the size of the array at the very beginning. size may vary during the program
- */
 const int SIZE = 10;
-
-/**
- * @brief array capacity constant
- *
- *
- * this constant denotes the capacity of the array at the very beginning. capacity may vary during the program
- */
 const int CAPACITY = SIZE + 5;
-
-/**
- * @brief hash constant
- *
- *
- * multiplication constant in hash formula
- */
 const int HASH_CONST = 234;
-
-/**
- * @brief hash constant
- *
- *
- * xor constant in hash formula
- */
 const int XOR_CONST = 555555555;
-
-/**
- * @brief hash constant
- *
- *
- * constant for taking the modulus in a hash formula
- */
 const int MOD_FOR_HASH = 107;
-
-/**
- * @brief unused elements constant
- *
- *
- * if the stack element is not yet defined, then this value is used as the value of the element
- */
 const Elem_t POISONELEMENT = -1;
-
-/**
- * @brief constant realloc
- *
- *
- * denotes how many times the stack size needs to be increased when new memory is allocated
- */
-const float UP_KOEF = 2.0;
-
-/**
- * @brief constant realloc
- *
- *
- * denotes how many times the stack size needs to be reduced when allocating new memory
- */
+const int DOP_RIGHT = 1;
+const int DOP_LEFT = 1;
+const int UP_KOEF = 2;
 const float DOWN_KOEF = 0.5;
 
 const Canary_t BUF_CANARY =  0xDEDEEDED;
 
 #define LINE __LINE__
-#define FILE __FILE__
+#define FILEF __FILE__
 
-#define STACK_DUMP(myStack) StackDump(myStack, FILE, LINE, __func__);
+#define STACK_DUMP(myStack) StackDump(myStack, FILEF, LINE, __func__);
 
-#define STACK_CONSTRUCT(nameStruct) {       \
-    struct Stack nameStruct = {};           \
-    stack_ctor(&nameStruct);                \
-}
-
-
-#define STACK_VERIFY(myStack) {             \
-    if (StackVerify(myStack) > 0) {         \
-        STACK_DUMP(myStack);                \
-    }                                       \
+#define STACK_VERIFY(myStack) {        \
+    if (StackVerify(myStack) > 0) {    \
+        STACK_DUMP(myStack);           \
+    }                                  \
 }
 
 #define CALCULATE_HASH(stack) stack->hash = CalculateHash(stack)
@@ -213,5 +139,7 @@ Elem_t * PointerLeftCanary(struct Stack* myStack);
 //!
 //! the pointer changes to the right canary pointer
 Elem_t * PointerRightCanary(struct Stack* myStack);
+
+int GetSizeStack (struct Stack* myStack);
 
 #endif

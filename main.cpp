@@ -1,38 +1,52 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "log_funcs.h"
 #include "stack.h"
-
-int printf_Stack(struct Stack* myStack);
-int sravnenie(char* string, struct Stack* myStack);
+#include "cpu.h"
 
 int main()
 {
-    OpenLogFile("LOGE", "w");
+    OpenLogFile ("LOGE", "w");
 
-    Stack myStack;
-    StackCtor(&myStack);
+    Stack myStack = {};
 
-    int i = 0;
+    StackCtor (&myStack);
+    STACK_DUMP (&myStack);
 
-    while (1) // Бесконечный цикл
-    {
-        char string[20];
-        scanf("%s", string);
+    struct Cpu myCpu = {
+        myStack,
+        NULL,
+        NULL
+    };
 
-        if (strcmp(string, "exit") == 0)
-        {
-            break;
-        }
-
-        sravnenie(string, &myStack);
-    }
+    Compiler (&myCpu);
+//     char input[256];
+//
+//     while (true) {
+//         scanf("%s", input);
+//
+//         if (strcmp(input, "exit") == 0) {
+//             printf ("%d\n", StackPop(&myStack));
+//             break;
+//         }
+//         else
+//         {
+//             // for (int i = myStack.size - 1; i >= 0; i--) {
+//             //     printf("%d\n", myStack.data[i]);
+//             // }
+//
+//             sravnenie_v1(input, &myStack);
+//         }
+//     }
 
     StackDtor(&myStack);
 
     return 0;
 }
+
+//-DWITH_CANARY_AND_HASHE
+
+
 
 

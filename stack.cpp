@@ -12,11 +12,11 @@ void StackDump(struct Stack* myStack, const char *file, int line, const char *fu
 {
     fprintf(LOG_FILE, "\nTime is %s\n", __TIME__);
     fprintf(LOG_FILE, "I'm stackDump called from %s (%d) %s\n", function, line, file);
-    fprintf(LOG_FILE, "Stack[%p] \"myStack\" from %s(%d) in function - %s.\n\n", myStack->data, FILE, LINE, function);
+    fprintf(LOG_FILE, "Stack[%p] \"myStack\" from %s(%d) in function - %s.\n\n", myStack->data, FILEF, LINE, function);
 
     fprintf(LOG_FILE, "--------------------------------------------------------------------------\n");
 #ifdef WITH_CANARY
-    fprintf(LOG_FILE, "STRUCT CANARY_START = %llu\n\n", myStack -> canary_start);
+    fprintf(LOG_FILE, "STRUCT CANARY_START = %u\n\n", myStack -> canary_start);
 #endif
     fprintf(LOG_FILE, "Struct:\n");
     fprintf(LOG_FILE, "\tsize = %d\n", myStack->size);
@@ -24,20 +24,20 @@ void StackDump(struct Stack* myStack, const char *file, int line, const char *fu
     fprintf(LOG_FILE, "\tадрес data[] = %p\n", myStack->data);
 
 #ifdef WITH_CANARY
-    fprintf(LOG_FILE, "\nDATA CANARY LEFT  = %llu\n", *PointerLeftCanary(myStack));
+    fprintf(LOG_FILE, "\nDATA CANARY LEFT  = %d\n", *PointerLeftCanary(myStack));
 #endif
 
     int now_size = myStack->size;
     for (int i = 0; i < now_size; i++)
     {
-        fprintf(LOG_FILE, "\tdata[%d] = %lf\n", i, myStack->data[i]);
+        fprintf(LOG_FILE, "\tdata[%d] = %d\n", i, myStack->data[i]);
     }
 
 #ifdef WITH_CANARY
-    fprintf(LOG_FILE, "DATA CANARY RIGHT = %llu\n", *PointerRightCanary(myStack));
+    fprintf(LOG_FILE, "DATA CANARY RIGHT = %d\n", *PointerRightCanary(myStack));
     fprintf(LOG_FILE, "HASH = %lld\n", myStack->hash);
     fprintf(LOG_FILE, "\n");
-    fprintf(LOG_FILE, "STRUCT CANARY_END = %llu\n", myStack->canary_end);
+    fprintf(LOG_FILE, "STRUCT CANARY_END = %u\n", myStack->canary_end);
 #endif
     fprintf(LOG_FILE, "--------------------------------------------------------------------------\n");
 }
@@ -75,18 +75,14 @@ myStack->data = (Elem_t *)calloc(scale, sizeof(char));
 
 void StackPush(struct Stack* myStack, Elem_t value)
 {
-    printf("BLA\n");
-    //STACK_VERIFY(myStack);
+    STACK_VERIFY(myStack);
 
-    printf("BLA\n");
     if (myStack->size >= myStack->capacity) {
         float koef_capacity = UP_KOEF;
         StackRealloc(myStack, koef_capacity);
     }
-    printf("BLA\n");
 
     myStack->data[myStack->size++] = value;
-    printf("BLA\n");
 
 #ifdef WITH_HASH
     CALCULATE_HASH(myStack);
@@ -106,7 +102,7 @@ static void StackRealloc( Stack *myStack, float koef_capacity)
 
     if (allocatedData == NULL)
     {
-        fprintf(LOG_FILE, "ERROR MEMORY FOR REALLOC\n");
+        printf("ERROR MEMORY FOR REALLOC\n");
     }
 
     myStack->data = (Elem_t *)((Canary_t *)allocatedData + 1);
@@ -115,7 +111,7 @@ static void StackRealloc( Stack *myStack, float koef_capacity)
 
     if (myStack->data == NULL)
     {
-        fprintf(LOG_FILE, "ERROR MEMORY FOR REALLOC\n");
+        printf("ERROR MEMORY FOR REALLOC\n");
     }
 #endif
 
@@ -183,7 +179,7 @@ long long CalculateHash(struct Stack* myStack)
 
     for (int i = 0; i < myStack->capacity; i++)
     {
-        hash += ((((long long)(myStack->data[i] * HASH_CONST)) % MOD_FOR_HASH) ^ XOR_CONST);
+        hash = hash + ((((long long)(myStack->data[i] * HASH_CONST)) % MOD_FOR_HASH) ^ XOR_CONST);
     }
 
     return hash;
@@ -198,4 +194,13 @@ Elem_t * PointerRightCanary (struct Stack* myStack)
 {
     return (Elem_t *)((Canary_t *)myStack->data + myStack->capacity);
 }
+
+int GetSizeStack (struct Stack* myStack)
+{
+    STACK_VERIFY(myStack);
+    return myStack->size;
+}
+
+
+
 

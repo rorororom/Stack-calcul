@@ -1,5 +1,5 @@
 all:
-	g++-13 main.cpp stack.cpp error_func.cpp log_funcs.cpp calculator.cpp -o main.out
+	g++ -DWITH_CANARY -DWITH_HASH main.cpp stack.cpp error_func.cpp log_funcs.cpp cpu.cpp -o main.out
 
 .PHONY: clean
 clean:
