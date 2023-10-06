@@ -15,7 +15,7 @@ int Compiler(struct Cpu* myCpu)
         return 1;
     }
 
-    myCpu->outputfile = fopen("machine_code.txt", "w");
+    myCpu->outputfile = fopen(myCpu->filename, "w");
     if (myCpu->outputfile == NULL) {
         return 1;
     }
@@ -48,7 +48,7 @@ int Compiler(struct Cpu* myCpu)
         else if (code == POP && fscanf(inputFile, "%s", arg_command) != EOF)
         {
             int argCode = CommandToCode(arg_command);
-            pop_arg(myCpu, argCode);
+            PopArg(myCpu, argCode);
         }
         else
         {
@@ -134,4 +134,17 @@ void ReverseCompiler(FILE* inputFile, FILE* outputFile)
                 break;
         }
     }
+}
+
+void CpuCtor (struct Cpu* myCpu, struct Stack* myStack)
+{
+    myCpu->myStack = *myStack;
+
+    myCpu->rax = 0;
+    myCpu->rbx = 0;
+    myCpu->rcx = 0;
+    myCpu->rdx = 0;
+
+    myCpu->filename = "machine_code.txt";
+    myCpu->outputfile = NULL;
 }

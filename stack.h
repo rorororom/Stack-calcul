@@ -39,7 +39,7 @@ const Canary_t BUF_CANARY =  0xDEDEEDED;
  * @param hash          stack hash
  * @param canary_end    canary at the ending of the structure
  */
-struct Stack {
+struct Stack{
 #ifdef WITH_CANARY
     uint32_t canary_start;
 #endif

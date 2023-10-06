@@ -10,110 +10,40 @@
 void Cpu(struct Cpu* myCpu)
 {
     int code = 0;
-    int code_arg = 0;
-    Elem_t value = 0;
-    Elem_t number1 = 0, number2 = 0;
 
     while (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code), &code) != EOF)
     {
         switch (code)
         {
             case 1:
-                if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(value), &value) != EOF)
-                {
-                    StackPush(&myCpu->myStack, value);
-                }
+                CasePush(myCpu);
                 break;
             case 2:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-                    number2 = StackPop(&myCpu->myStack);
-
-                    value = number2 - number1;
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseSub(myCpu);
                 break;
             case 3:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-                    number2 = StackPop(&myCpu->myStack);
-
-                    value = number2 + number1;
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseAdd(myCpu);
                 break;
             case 4:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-                    number2 = StackPop(&myCpu->myStack);
-
-                    value = number2 * number1;
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseMul(myCpu);
                 break;
             case 5:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-                    number2 = StackPop(&myCpu->myStack);
-
-                    if (number1 == 0)
-                    {
-                        printf("Ошибка: деление на ноль недопустимо.\n");
-                        StackPush(&myCpu->myStack, number2);
-                        StackPush(&myCpu->myStack, number1);
-                    }
-                    else
-                    {
-                        value = number2 / number1;
-                        StackPush(&myCpu->myStack, value);
-                    }
-                }
+                CaseDiv(myCpu);
                 break;
             case 6:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-
-                    value = number1 * 0.5;
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseSqrt(myCpu);
                 break;
             case 7:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-
-                    value = sin(number1);
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseSin(myCpu);
                 break;
             case 8:
-                if (CheckStackSizeForOperation(&myCpu->myStack))
-                {
-                    number1 = StackPop(&myCpu->myStack);
-
-                    value = cos(number1);
-
-                    StackPush(&myCpu->myStack, value);
-                }
+                CaseCos(myCpu);
                 break;
             case 9:
                 printf("answer = %d\n", StackPop(&myCpu->myStack));
                 break;
             case 33:
-                if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code_arg), &code_arg) != EOF)
-                {
-                    StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
-                }
+                CasePushR(myCpu);
                 break;
             case -1:
                 fclose(myCpu->outputfile);
@@ -144,7 +74,7 @@ Elem_t return_arg (struct Cpu* myCpu, int code)
     }
 }
 
-void pop_arg (struct Cpu* myCpu, int code)
+void PopArg (struct Cpu* myCpu, int code)
 {
     switch (code)
     {
@@ -172,3 +102,139 @@ int CheckStackSizeForOperation (struct Stack* myStack)
     return 1;
 }
 
+void CasePush (struct Cpu* myCpu)
+{
+    int value = 0;
+
+    if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(value), &value) != EOF)
+    {
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseSub (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0, number2 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+        number2 = StackPop(&myCpu->myStack);
+
+        value = number2 - number1;
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseAdd (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0, number2 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+        number2 = StackPop(&myCpu->myStack);
+
+        value = number2 + number1;
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseMul (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0, number2 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+        number2 = StackPop(&myCpu->myStack);
+
+        value = number2 * number1;
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseDiv (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0, number2 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+        number2 = StackPop(&myCpu->myStack);
+
+        if (number1 == 0)
+        {
+            printf("Ошибка: деление на ноль недопустимо.\n");
+            StackPush(&myCpu->myStack, number2);
+            StackPush(&myCpu->myStack, number1);
+        }
+        else
+        {
+            value = number2 / number1;
+            StackPush(&myCpu->myStack, value);
+        }
+    }
+}
+
+void CaseSqrt (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+
+        value = number1 * 0.5;
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseSin (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+
+        value = sin(number1);
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CaseCos (struct Cpu* myCpu)
+{
+    Elem_t number1 = 0;
+    int value = 0;
+
+    if (CheckStackSizeForOperation(&myCpu->myStack))
+    {
+        number1 = StackPop(&myCpu->myStack);
+
+        value = cos(number1);
+
+        StackPush(&myCpu->myStack, value);
+    }
+}
+
+void CasePushR (struct Cpu* myCpu)
+{
+    int code_arg = 0;
+
+    if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code_arg), &code_arg) != EOF)
+    {
+        StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
+    }
+}

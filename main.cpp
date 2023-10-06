@@ -11,15 +11,12 @@ int main()
     OpenLogFile ("LOGE", "w");
 
     Stack myStack = {};
-
     StackCtor (&myStack);
     STACK_DUMP (&myStack);
 
-    struct Cpu myCpu = {
-        myStack,
-        NULL,
-        NULL
-    };
+    struct Cpu myCpu = {};
+    CpuCtor (&myCpu, &myStack);
+
 
     Compiler (&myCpu);
 

@@ -149,3 +149,22 @@ int SravnenieV1(char string[], struct Stack* myStack)
 //         return -1;
 //     }
 // }
+
+// in
+// pop rax
+// in
+// pop rbx
+// in
+// pop rcx
+// push_r rbx
+// push_r rbx
+// mul
+// push 4
+// push_r rax
+// push_r rcx
+// mul
+// mul
+// sub
+// out
+// hlt
+
