@@ -16,12 +16,13 @@ int main()
 
     struct Cpu myCpu = {};
     CpuCtor (&myCpu, &myStack);
-
+    CPU_DUMP (&myCpu);
 
     Compiler (&myCpu);
 
-    StackDtor(&myStack);
+    Cpu(&myCpu);
 
+    CpuDtor (&myCpu);
     return 0;
 }
 

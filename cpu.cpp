@@ -6,6 +6,7 @@
 #include "stack.h"
 #include "cpu.h"
 #include "compiler.h"
+#include "log_funcs.h"
 
 void Cpu(struct Cpu* myCpu)
 {
@@ -237,4 +238,14 @@ void CasePushR (struct Cpu* myCpu)
     {
         StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
     }
+}
+
+void CpuDump (struct Cpu* myCpu)
+{
+    fprintf(LOG_FILE, "CPU Dump:\n");
+    fprintf(LOG_FILE, "  RAX: %d\n", myCpu->rax);
+    fprintf(LOG_FILE, "  RBX: %d\n", myCpu->rbx);
+    fprintf(LOG_FILE, "  RCX: %d\n", myCpu->rcx);
+    fprintf(LOG_FILE, "  RDX: %d\n", myCpu->rdx);
+    fprintf(LOG_FILE, "  Filename: %s\n", myCpu->filename);
 }

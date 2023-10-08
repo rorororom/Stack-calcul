@@ -40,6 +40,10 @@ struct Cpu {
     char*: "%s" \
 )
 
+#define CPU_DUMP(myCpu) CpuDump(myCpu);
+
+void CpuDump (struct Cpu* myCpu);
+
 void Cpu(struct Cpu* myCpu);
 int CheckStackSizeForOperation (struct Stack* myStack);
 int call_arg (struct Cpu* myCpu, char arg_rAx[]);
@@ -55,3 +59,4 @@ void CaseSqrt (struct Cpu* myCpu);
 void CaseSin (struct Cpu* myCpu);
 void CaseCos (struct Cpu* myCpu);
 void CasePushR (struct Cpu* myCpu);
+

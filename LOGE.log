@@ -1,9 +1,9 @@
 \----------------------------------------------------\
 ОТКРЫТ ФАЙЛ
 
-Time is 23:32:04
+Time is 13:19:57
 I'm stackDump called from main (15) main.cpp
-Stack[0x7ff63d405a64] "myStack" from stack.cpp(15) in function - main.
+Stack[0x7fb3c9405a64] "myStack" from stack.cpp(15) in function - main.
 
 --------------------------------------------------------------------------
 STRUCT CANARY_START = 3739151853
@@ -11,7 +11,7 @@ STRUCT CANARY_START = 3739151853
 Struct:
 	size = 0
 	capacity = 15
-	адрес data[] = 0x7ff63d405a64
+	адрес data[] = 0x7fb3c9405a64
 
 DATA CANARY LEFT  = -555815443
 DATA CANARY RIGHT = -555815443
@@ -19,5 +19,11 @@ HASH = 8333333325
 
 STRUCT CANARY_END = 3739151853
 --------------------------------------------------------------------------
+CPU Dump:
+  RAX: 0
+  RBX: 0
+  RCX: 0
+  RDX: 0
+  Filename: machine_code.txt
 ЗАКРЫТ ФАЙЛ
 \----------------------------------------------------\

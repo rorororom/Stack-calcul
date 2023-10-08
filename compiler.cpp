@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 
-#include "stack.h"
 #include "cpu.h"
 #include "compiler.h"
 
@@ -23,6 +22,19 @@ int Compiler(struct Cpu* myCpu)
     char command[256] = "";
     char arg_command[256] = "";
     int value = 0;
+
+    if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "moss") != 0)
+    {
+        printf ("НЕ ТВОЙ ИСХОДНИК\n");
+        return -1;
+    }
+
+    if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "VERSION2") != 0)
+    {
+        printf ("НЕ ТА ВЕРСИЯ\n");
+        return -1;
+    }
+
 
     while (fscanf(inputFile, "%s", command) != EOF)
     {
@@ -62,8 +74,6 @@ int Compiler(struct Cpu* myCpu)
     if (myCpu->outputfile == NULL) {
         return 1;
     }
-
-    Cpu(myCpu);
 
     return 0;
 }
@@ -146,5 +156,18 @@ void CpuCtor (struct Cpu* myCpu, struct Stack* myStack)
     myCpu->rdx = 0;
 
     myCpu->filename = "machine_code.txt";
+    myCpu->outputfile = NULL;
+}
+
+void CpuDtor (struct Cpu* myCpu)
+{
+    StackDtor(&myCpu->myStack);
+
+    myCpu->rax = 0;
+    myCpu->rbx = 0;
+    myCpu->rcx = 0;
+    myCpu->rdx = 0;
+
+    myCpu->filename = NULL;
     myCpu->outputfile = NULL;
 }
