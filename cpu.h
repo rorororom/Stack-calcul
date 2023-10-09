@@ -31,6 +31,7 @@ struct Cpu {
     int rbx;
     int rcx;
     int rdx;
+    char* codeArray;
 };
 
 #define FORMAT_SPECIFIER(type) _Generic((type), \
@@ -44,7 +45,8 @@ struct Cpu {
 
 void CpuDump (struct Cpu* myCpu);
 
-void Cpu(struct Cpu* myCpu);
+void Cpu(struct Cpu* myCpu, int position);
+int CpuBinary (struct Cpu* myCpu, int position);
 int CheckStackSizeForOperation (struct Stack* myStack);
 int call_arg (struct Cpu* myCpu, char arg_rAx[]);
 void PopArg (struct Cpu* myCpu, int code);

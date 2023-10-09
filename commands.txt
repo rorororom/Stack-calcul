@@ -1,4 +1,4 @@
-moss6
+moss
 VERSION2
 in
 pop rax

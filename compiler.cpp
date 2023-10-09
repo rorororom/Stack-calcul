@@ -5,6 +5,7 @@
 
 #include "cpu.h"
 #include "compiler.h"
+#include "log_funcs.h"
 
 int Compiler(struct Cpu* myCpu)
 {
@@ -22,6 +23,9 @@ int Compiler(struct Cpu* myCpu)
     char command[256] = "";
     char arg_command[256] = "";
     int value = 0;
+
+    myCpu -> codeArray = (char*)calloc(MAXSIZE, sizeof(char));
+    int position = 0;
 
     if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "moss") != 0)
     {
@@ -42,12 +46,16 @@ int Compiler(struct Cpu* myCpu)
 
         if (code == PUSH && fscanf(inputFile, "%d", &value) != EOF)
         {
+            myCpu -> codeArray[position++] = code;
+            myCpu -> codeArray[position++] = value;
             fprintf(myCpu->outputfile, "%d  ", code);
             fprintf(myCpu->outputfile, "%d\n", value);
         }
         else if (code == PUSH_R && fscanf(inputFile, "%s", arg_command) != EOF)
         {
             int argCode = CommandToCode(arg_command);
+            myCpu -> codeArray[position++] = code;
+            myCpu -> codeArray[position++] = argCode;
             fprintf(myCpu->outputfile, "%d  ", code);
             fprintf(myCpu->outputfile, "%d\n", argCode);
         }
@@ -64,9 +72,18 @@ int Compiler(struct Cpu* myCpu)
         }
         else
         {
+            myCpu -> codeArray[position++] = code;
             fprintf(myCpu->outputfile, "%d\n", code);
         }
     }
+
+    fprintf(LOG_FILE, "МАССИВ КОМАНД\n");
+    for(int i = 0; i < position; i++)
+    {
+        fprintf(LOG_FILE, "%d - %d\n", i, myCpu -> codeArray[i]);
+    }
+
+    BinaryRecordind (position, myCpu);
 
     fclose(myCpu->outputfile);
 
@@ -75,7 +92,7 @@ int Compiler(struct Cpu* myCpu)
         return 1;
     }
 
-    return 0;
+    return position;
 }
 
 int CommandToCode(const char* command)
@@ -170,4 +187,35 @@ void CpuDtor (struct Cpu* myCpu)
 
     myCpu->filename = NULL;
     myCpu->outputfile = NULL;
+}
+
+int BinaryRecordind (int position, struct Cpu* myCpu)
+{
+    FILE* file = fopen("code2.bin", "wb");
+
+    if (file == NULL) {
+        perror("Не удается открыть файл");
+        return 1;
+    }
+    size_t elements_written = fwrite(myCpu -> codeArray, sizeof(uint8_t), position, file);
+
+    if (elements_written != position) {
+        perror("Ошибка при записи в файл");
+        fclose(file);
+        return 1;
+    }
+
+    fclose(file);
+
+    file = fopen("code2.bin", "rb");
+
+    fprintf (LOG_FILE, "ИЗ ДВОИЧНОГО ФАЙЛА\n");
+    for (int i = 0; i < position; i++)
+    {
+        fprintf(LOG_FILE, "%d - %08X\n", i, myCpu -> codeArray[i]);
+    }
+
+    fclose(file);
+
+    return 0;
 }
