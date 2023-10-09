@@ -24,7 +24,6 @@ int Compiler(struct Cpu* myCpu)
     char arg_command[256] = "";
     int value = 0;
 
-    myCpu -> codeArray = (char*)calloc(MAXSIZE, sizeof(char));
     int position = 0;
 
     if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "moss") != 0)
@@ -167,10 +166,8 @@ void CpuCtor (struct Cpu* myCpu, struct Stack* myStack)
 {
     myCpu->myStack = *myStack;
 
-    myCpu->rax = 0;
-    myCpu->rbx = 0;
-    myCpu->rcx = 0;
-    myCpu->rdx = 0;
+    myCpu -> codeArray = (char*)calloc(MAXSIZE, sizeof(char));
+    myCpu -> codeRegister = (int*)calloc(MAX_SIZE_REG, sizeof(char));
 
     myCpu->filename = "machine_code.txt";
     myCpu->outputfile = NULL;
@@ -180,13 +177,14 @@ void CpuDtor (struct Cpu* myCpu)
 {
     StackDtor(&myCpu->myStack);
 
-    myCpu->rax = 0;
-    myCpu->rbx = 0;
-    myCpu->rcx = 0;
-    myCpu->rdx = 0;
-
     myCpu->filename = NULL;
     myCpu->outputfile = NULL;
+
+    free(myCpu->codeArray);
+    myCpu->codeArray = NULL;
+    
+    free(myCpu->codeRegister);
+    myCpu->codeRegister = NULL;
 }
 
 int BinaryRecordind (int position, struct Cpu* myCpu)

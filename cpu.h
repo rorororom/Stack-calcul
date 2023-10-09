@@ -2,6 +2,8 @@
 
 typedef int Elem_t;
 
+const int MAX_SIZE_REG = 10;
+
 enum {
     PUSH = 1,
     SUB, //2
@@ -27,11 +29,12 @@ struct Cpu {
     struct Stack myStack;
     const char *filename;
     FILE *outputfile;
-    int rax;
-    int rbx;
-    int rcx;
-    int rdx;
+    // int rax;
+    // int rbx;
+    // int rcx;
+    // int rdx;
     char* codeArray;
+    int* codeRegister;
 };
 
 #define FORMAT_SPECIFIER(type) _Generic((type), \

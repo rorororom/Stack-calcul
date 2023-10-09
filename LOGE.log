@@ -1,9 +1,9 @@
 \----------------------------------------------------\
 ОТКРЫТ ФАЙЛ
 
-Time is 15:04:22
+Time is 18:43:32
 I'm stackDump called from main (15) main.cpp
-Stack[0x7fdb5fc05a64] "myStack" from stack.cpp(15) in function - main.
+Stack[0x7ff352c05a64] "myStack" from stack.cpp(15) in function - main.
 
 --------------------------------------------------------------------------
 STRUCT CANARY_START = 3739151853
@@ -11,7 +11,7 @@ STRUCT CANARY_START = 3739151853
 Struct:
 	size = 0
 	capacity = 15
-	адрес data[] = 0x7fdb5fc05a64
+	адрес data[] = 0x7ff352c05a64
 
 DATA CANARY LEFT  = -555815443
 DATA CANARY RIGHT = -555815443
@@ -20,11 +20,16 @@ HASH = 8333333325
 STRUCT CANARY_END = 3739151853
 --------------------------------------------------------------------------
 CPU Dump:
-  RAX: 0
-  RBX: 0
-  RCX: 0
-  RDX: 0
-  Filename: machine_code.txt
+1 = 0
+2 = 0
+3 = 0
+4 = 0
+5 = 0
+6 = 0
+7 = 0
+8 = 0
+9 = 0
+     Filename: machine_code.txt
 МАССИВ КОМАНД
 0 - 33
 1 - 102
@@ -59,6 +64,36 @@ CPU Dump:
 13 - 00000002
 14 - 00000009
 15 - FFFFFFFF
+
+Time is 18:43:32
+I'm stackDump called from main (22) main.cpp
+Stack[0x7ff352c05a64] "myStack" from stack.cpp(15) in function - main.
+
+--------------------------------------------------------------------------
+STRUCT CANARY_START = 3739151853
+
+Struct:
+	size = 0
+	capacity = 15
+	адрес data[] = 0x7ff352c05a64
+
+DATA CANARY LEFT  = -555815443
+DATA CANARY RIGHT = -555815443
+HASH = 8333333325
+
+STRUCT CANARY_END = 3739151853
+--------------------------------------------------------------------------
+CPU Dump:
+1 = 1
+2 = 6
+3 = 8
+4 = 0
+5 = 0
+6 = 0
+7 = 0
+8 = 0
+9 = 0
+     Filename: machine_code.txt
 МАССИВ КОМАНД111
 0 - 33
 1 - 102
@@ -76,5 +111,35 @@ CPU Dump:
 13 - 2
 14 - 9
 15 - -1
+
+Time is 18:43:32
+I'm stackDump called from main (26) main.cpp
+Stack[0x7ff352c05a64] "myStack" from stack.cpp(15) in function - main.
+
+--------------------------------------------------------------------------
+STRUCT CANARY_START = 3739151853
+
+Struct:
+	size = 0
+	capacity = 15
+	адрес data[] = 0x7ff352c05a64
+
+DATA CANARY LEFT  = -555815443
+DATA CANARY RIGHT = -555815443
+HASH = 8333333325
+
+STRUCT CANARY_END = 3739151853
+--------------------------------------------------------------------------
+CPU Dump:
+1 = 1
+2 = 6
+3 = 8
+4 = 0
+5 = 0
+6 = 0
+7 = 0
+8 = 0
+9 = 0
+     Filename: machine_code.txt
 ЗАКРЫТ ФАЙЛ
 \----------------------------------------------------\

@@ -19,8 +19,12 @@ int main()
     CPU_DUMP (&myCpu);
 
     int position = Compiler (&myCpu);
+    STACK_DUMP (&myStack);
+    CPU_DUMP (&myCpu);
 
     CpuBinary(&myCpu, position);
+    STACK_DUMP (&myStack);
+    CPU_DUMP (&myCpu);
 
     CpuDtor (&myCpu);
     return 0;
