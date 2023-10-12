@@ -20,15 +20,15 @@ const Canary_t BUF_CANARY =  0xDEDEEDED;
 #define LINE __LINE__
 #define FILEF __FILE__
 
-#define STACK_DUMP(myStack) StackDump(myStack, FILEF, LINE, __func__);
+#define STACK_DUMP(myStack) StackDump (myStack, FILEF, LINE, __func__);
 
 #define STACK_VERIFY(myStack) {        \
-    if (StackVerify(myStack) > 0) {    \
-        STACK_DUMP(myStack);           \
+    if (StackVerify (myStack) > 0) {    \
+        STACK_DUMP (myStack);           \
     }                                  \
 }
 
-#define CALCULATE_HASH(stack) stack->hash = CalculateHash(stack)
+#define CALCULATE_HASH(stack) stack->hash = CalculateHash (stack)
 
 /**
  * @brief               Elements needed to work in a stack
@@ -75,7 +75,7 @@ enum StackErrors {
 //!
 //!
 //! sets initial parameters for the structure and allocates memory for the initial stack size
-void StackCtor(struct Stack* myStack);
+void StackCtor (struct Stack* myStack);
 
 //
 //! @brief destroys all stack data
@@ -83,7 +83,7 @@ void StackCtor(struct Stack* myStack);
 //!
 //!
 //! resets all data and stack pointers
-void StackDtor(struct Stack* myStack);
+void StackDtor (struct Stack* myStack);
 
 //
 //! @brief adding elements to the stack
@@ -91,7 +91,7 @@ void StackDtor(struct Stack* myStack);
 //!
 //!
 //! adds elements to the stack and increases the stack size
-void StackPush(struct Stack* myStack, Elem_t value);
+void StackPush (struct Stack* myStack, Elem_t value);
 
 //
 //! @brief deletes elements to the stack
@@ -100,7 +100,7 @@ void StackPush(struct Stack* myStack, Elem_t value);
 //!
 //!
 //! returns and removes elements from the stack
-Elem_t StackPop(struct Stack* myStack);
+Elem_t StackPop (struct Stack* myStack);
 
 //
 //! @brief prints all stack data
@@ -111,14 +111,14 @@ Elem_t StackPop(struct Stack* myStack);
 //!
 //!
 //! makes a complete printout of the stack and its data
-void StackDump(struct Stack* myStack, const char *file, int line, const char *function);
+void StackDump (struct Stack* myStack, const char *file, int line, const char *function);
 
 //! @brief prints all errors
 //! @param [in]  sum_errors sum of errors
 //!
 //!
 //! prints all stack related errors
-void PrintStackErrors(int sum_errors);
+void PrintStackErrors (int sum_errors);
 
 //! @brief calculates hash
 //! @param [in]  myStack all structure data
@@ -132,13 +132,13 @@ long long CalculateHash (struct Stack* myStack);
 //!
 //!
 //! the pointer changes to the left canary pointer
-Elem_t * PointerLeftCanary(struct Stack* myStack);
+Elem_t * PointerLeftCanary (struct Stack* myStack);
 //! @brief the pointer right canary
 //! @param [in]  myStack all structure data
 //!
 //!
 //! the pointer changes to the right canary pointer
-Elem_t * PointerRightCanary(struct Stack* myStack);
+Elem_t * PointerRightCanary (struct Stack* myStack);
 
 int GetSizeStack (struct Stack* myStack);
 

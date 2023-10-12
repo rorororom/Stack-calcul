@@ -27,12 +27,12 @@ struct StackErrors {
     int ERROR_CANARY_END_BIT;
 };
 
-void PrintStackErrors(struct StackErrors* stackErrors);
-void StackRellocUp(struct Stack *myStack, float koef_capacity, struct StackErrors* stackErrors);
-void StackDump(struct Stack* myStack, struct StackErrors* stackErrors);
-struct StackErrors StackOk(struct Stack* myStack);
-void StackCtor(struct Stack* myStack, struct StackErrors* stackErrors);
-void StackPush(struct Stack* myStack, Elem_t value, struct StackErrors* stackErrors);
-void StackDtor(struct Stack* myStack, struct StackErrors* stackErrors);
-Elem_t StackPop(struct Stack* myStack, struct StackErrors* stackErrors);
+void PrintStackErrors (struct StackErrors* stackErrors);
+void StackRellocUp (struct Stack *myStack, float koef_capacity, struct StackErrors* stackErrors);
+void StackDump (struct Stack* myStack, struct StackErrors* stackErrors);
+struct StackErrors StackOk (struct Stack* myStack);
+void StackCtor (struct Stack* myStack, struct StackErrors* stackErrors);
+void StackPush (struct Stack* myStack, Elem_t value, struct StackErrors* stackErrors);
+void StackDtor (struct Stack* myStack, struct StackErrors* stackErrors);
+Elem_t StackPop (struct Stack* myStack, struct StackErrors* stackErrors);
 int StackFuncCanary ();

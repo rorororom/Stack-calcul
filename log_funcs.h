@@ -10,7 +10,7 @@ extern FILE* LOG_FILE;
 //!
 //!
 //! a file is created and opened
-void CloseLogFile();
+void CloseLogFile ();
 
 //
 //! @brief closing a file

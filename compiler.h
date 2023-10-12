@@ -1,12 +1,18 @@
-const int MAXSIZE = 10000;
+#define ADD_CODE_VALUE(arr, pos, code, value, file)     \
+    do {                                                \
+        (arr)[(pos)++] = (code);                        \
+        (arr)[ (pos)++] = (value);                       \
+        fprintf ( (file), "%d  %d\n", (code), (value));   \
+    } while (0)
 
-int Compiler(struct Cpu* myCpu);
-int CommandToCode(const char* command);
-void ReverseCompiler(FILE* inputFile, FILE* outputFile);
+
+int Compiler ();
+int CommandToCode (const char* command);
+void ReverseCompiler (FILE* inputFile, FILE* outputFile);
 int CheckStackSizeForOperation (struct Stack* myStack);
+int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile);
 
-void CpuCtor (struct Cpu* myCpu, struct Stack* myStack);
-void CpuDtor (struct Cpu* myCpu);
+void CheckingSignatureAndVersion (FILE* inputFile);
 
-int BinaryRecordind (int position, struct Cpu* myCpu);
+int BinaryRecordind (int position, char* codeArray);
 

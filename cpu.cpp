@@ -3,76 +3,56 @@
 #include <string.h>
 #include <math.h>
 
-#include "stack.h"
+#include "creator_cpu.h"
 #include "cpu.h"
-#include "compiler.h"
 #include "log_funcs.h"
 
-void Cpu(struct Cpu* myCpu, int position)
+int CpuBinary (struct Cpu* myCpu)
 {
     int code = 0;
-
-    while (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code), &code) != EOF)
-    {
-        switch (code)
-        {
-            case 1:
-                CasePush(myCpu);
-                break;
-            case 2:
-                CaseSub(myCpu);
-                break;
-            case 3:
-                CaseAdd(myCpu);
-                break;
-            case 4:
-                CaseMul(myCpu);
-                break;
-            case 5:
-                CaseDiv(myCpu);
-                break;
-            case 6:
-                CaseSqrt(myCpu);
-                break;
-            case 7:
-                CaseSin(myCpu);
-                break;
-            case 8:
-                CaseCos(myCpu);
-                break;
-            case 9:
-                printf("answer = %d\n", StackPop(&myCpu->myStack));
-                break;
-            case 33:
-                CasePushR(myCpu);
-                break;
-            case -1:
-                fclose(myCpu->outputfile);
-                break;
-            default:
-                printf("Неизвестный код операции: %d\n", code);
-                break;
-        }
-    }
-}
-
-int CpuBinary (struct Cpu* myCpu, int position)
-{
-    int code = 0;
-
     FILE* file = fopen("code2.bin", "rb");
+
+    int position = 0;
+    if (fread(&position, sizeof(int), 1, file) != 1) {
+        perror("!Ошибка при чтении из файла");
+        fclose(file);
+        return 1;
+    }
+
     char* codeArray = (char*)calloc(position, sizeof(char));
 
-    fread(codeArray, position, sizeof(int), file);
-    fprintf(LOG_FILE, "МАССИВ КОМАНД111\n");
-    for(int i = 0; i < position; i++)
-    {
-        fprintf(LOG_FILE, "%d - %d\n", i, codeArray[i]);
+    if (codeArray == NULL) {
+        perror("Не удается выделить память");
+        fclose(file);
+        return 1;
     }
 
+    printf("position = %d\n", position);
+
+    if (fread(codeArray, sizeof(char), position, file) != position) {
+        perror("Ошибка при чтении из файла");
+        free(codeArray);
+        fclose(file);
+        return 1;
+    }
+
+    fclose(file);
+
+    CommandPrintout (position, codeArray);
+
+    ProcessCodeArray(myCpu, codeArray, position);
+
+    return 0;
+}
+
+void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position)
+{
     int i = 0;
     int value = 0;
     int code_arg = 0;
+    int aa = 0;
+    int code = 0;
+
     while (i < position)
     {
         code = codeArray[i];
@@ -116,11 +96,23 @@ int CpuBinary (struct Cpu* myCpu, int position)
                 printf("answer = %d\n", StackPop(&myCpu->myStack));
                 i++;
                 break;
+            case 10:
+                printf("Введите число\n");
+                scanf("%d", &value);
+                StackPush(&myCpu->myStack, value);
+                i++;
+                break;
+            case 11:
+                i += 1;
+                code_arg = codeArray[i];
+                PopArg(myCpu, code_arg);
+                i += 1;
+                break;
             case 33:
                 i += 1;
                 code_arg = codeArray[i];
                 StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
-                i++;
+                i += 1;
                 break;
             case -1:
                 fclose(myCpu->outputfile);
@@ -154,6 +146,8 @@ Elem_t return_arg (struct Cpu* myCpu, int code)
             printf("Неизвестный регистр: %d\n", code);
             break;
     }
+
+    return 0;
 }
 
 void PopArg (struct Cpu* myCpu, int code)
@@ -172,7 +166,7 @@ void PopArg (struct Cpu* myCpu, int code)
         case 104:
             break;
         default:
-            printf("Неизвестный регистр: %d\n", code);
+            printf("!!!!!Неизвестный регистр: %d\n", code);
             break;
     }
 }
@@ -336,3 +330,50 @@ void CpuDump (struct Cpu* myCpu)
     fprintf(LOG_FILE, "     Filename: %s\n", myCpu->filename);
 }
 
+void Cpu(struct Cpu* myCpu)
+{
+    int code = 0;
+
+    while (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code), &code) != EOF)
+    {
+        switch (code)
+        {
+            case 1:
+                CasePush(myCpu);
+                break;
+            case 2:
+                CaseSub(myCpu);
+                break;
+            case 3:
+                CaseAdd(myCpu);
+                break;
+            case 4:
+                CaseMul(myCpu);
+                break;
+            case 5:
+                CaseDiv(myCpu);
+                break;
+            case 6:
+                CaseSqrt(myCpu);
+                break;
+            case 7:
+                CaseSin(myCpu);
+                break;
+            case 8:
+                CaseCos(myCpu);
+                break;
+            case 9:
+                printf("answer = %d\n", StackPop(&myCpu->myStack));
+                break;
+            case 33:
+                CasePushR(myCpu);
+                break;
+            case -1:
+                fclose(myCpu->outputfile);
+                break;
+            default:
+                printf("Неизвестный код операции: %d\n", code);
+                break;
+        }
+    }
+}

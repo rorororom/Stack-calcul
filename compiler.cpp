@@ -3,217 +3,210 @@
 #include <string.h>
 #include <math.h>
 
-#include "cpu.h"
+#include "creator_cpu.h"
 #include "compiler.h"
 #include "log_funcs.h"
 
-int Compiler(struct Cpu* myCpu)
+int Compiler ()
 {
-    FILE* inputFile = fopen("commands.txt", "r");
+    FILE* inputFile = fopen ("commands.txt", "r");
     if (inputFile == NULL) {
-        perror("Не удается открыть файл");
+        perror ("Не удается открыть файл");
         return 1;
     }
 
-    myCpu->outputfile = fopen(myCpu->filename, "w");
-    if (myCpu->outputfile == NULL) {
+    FILE* outputfile = fopen ("machine_code.txt", "w");
+    if (outputfile == NULL) {
         return 1;
     }
 
+    char* codeArray = (char*)calloc (MAXSIZE, sizeof (char));
+    int* codeRegister = (int*)calloc (MAX_SIZE_REG, sizeof (char));
+
+    CheckingSignatureAndVersion (inputFile);
+
+    int position = GenerateCodeFromInput (inputFile, codeArray, outputfile);
+
+    CommandPrintout (position, codeArray);
+
+    BinaryRecordind (position, codeArray);
+
+    PrintBinary (position, codeArray);
+
+    fclose (outputfile);
+
+    outputfile = fopen ("machine_code.txt", "r");
+    if (outputfile == NULL) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
+{
     char command[256] = "";
     char arg_command[256] = "";
     int value = 0;
 
     int position = 0;
+    int argCode = 0;
 
-    if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "moss") != 0)
+    while (fscanf (inputFile, "%s", command) != EOF)
     {
-        printf ("НЕ ТВОЙ ИСХОДНИК\n");
-        return -1;
-    }
+        int code = CommandToCode (command);
 
-    if (fscanf(inputFile, "%s", command) != EOF && strcmp(command, "VERSION2") != 0)
-    {
-        printf ("НЕ ТА ВЕРСИЯ\n");
-        return -1;
-    }
-
-
-    while (fscanf(inputFile, "%s", command) != EOF)
-    {
-        int code = CommandToCode(command);
-
-        if (code == PUSH && fscanf(inputFile, "%d", &value) != EOF)
+        if (code == PUSH && fscanf (inputFile, "%d", &value) != EOF)
         {
-            myCpu -> codeArray[position++] = code;
-            myCpu -> codeArray[position++] = value;
-            fprintf(myCpu->outputfile, "%d  ", code);
-            fprintf(myCpu->outputfile, "%d\n", value);
+            ADD_CODE_VALUE (codeArray, position, code, value, outputfile);
         }
-        else if (code == PUSH_R && fscanf(inputFile, "%s", arg_command) != EOF)
+        else if (code == PUSH_R && fscanf (inputFile, "%s", arg_command) != EOF)
         {
-            int argCode = CommandToCode(arg_command);
-            myCpu -> codeArray[position++] = code;
-            myCpu -> codeArray[position++] = argCode;
-            fprintf(myCpu->outputfile, "%d  ", code);
-            fprintf(myCpu->outputfile, "%d\n", argCode);
+            argCode = CommandToCode (arg_command);
+            ADD_CODE_VALUE (codeArray, position, code, argCode, outputfile);
         }
         else if (code == IN)
         {
-            printf("Введите число\n");
-            if (scanf("%d", &value))
-                StackPush(&myCpu->myStack, value);
+            codeArray[position++] = code;
+            fprintf (outputfile, "%d\n", code);
         }
-        else if (code == POP && fscanf(inputFile, "%s", arg_command) != EOF)
+        else if (code == POP && fscanf (inputFile, "%s", arg_command) != EOF)
         {
-            int argCode = CommandToCode(arg_command);
-            PopArg(myCpu, argCode);
+            argCode = CommandToCode (arg_command);
+            ADD_CODE_VALUE (codeArray, position, code, argCode, outputfile);
         }
         else
         {
-            myCpu -> codeArray[position++] = code;
-            fprintf(myCpu->outputfile, "%d\n", code);
+            codeArray[position++] = code;
+            fprintf (outputfile, "%d\n", code);
         }
-    }
-
-    fprintf(LOG_FILE, "МАССИВ КОМАНД\n");
-    for(int i = 0; i < position; i++)
-    {
-        fprintf(LOG_FILE, "%d - %d\n", i, myCpu -> codeArray[i]);
-    }
-
-    BinaryRecordind (position, myCpu);
-
-    fclose(myCpu->outputfile);
-
-    myCpu->outputfile = fopen("machine_code.txt", "r");
-    if (myCpu->outputfile == NULL) {
-        return 1;
     }
 
     return position;
 }
 
-int CommandToCode(const char* command)
+int CommandToCode (const char* command)
 {
-    if (strcmp (command, "push") == 0) return PUSH;
-    if (strcmp (command, "sub")  == 0) return SUB;
-    if (strcmp (command, "add")  == 0) return ADD;
-    if (strcmp (command, "mul")  == 0) return MUL;
-    if (strcmp (command, "div")  == 0) return DIV;
-    if (strcmp (command, "sqrt") == 0) return SQRT;
-    if (strcmp (command, "sin")  == 0) return SIN;
-    if (strcmp (command, "cos")  == 0) return COS;
-    if (strcmp (command, "out")  == 0) return OUT;
-    if (strcmp (command, "hlt")  == 0) return HLT;
+    if (strcmp (command, "push")    == 0) return PUSH;
+    if (strcmp (command, "sub")     == 0) return SUB;
+    if (strcmp (command, "add")     == 0) return ADD;
+    if (strcmp (command, "mul")     == 0) return MUL;
+    if (strcmp (command, "div")     == 0) return DIV;
+    if (strcmp (command, "sqrt")    == 0) return SQRT;
+    if (strcmp (command, "sin")     == 0) return SIN;
+    if (strcmp (command, "cos")     == 0) return COS;
+    if (strcmp (command, "out")     == 0) return OUT;
+    if (strcmp (command, "hlt")     == 0) return HLT;
     if (strcmp (command, "push_r")  == 0) return PUSH_R;
-    if (strcmp (command, "in")  == 0) return IN;
-    if (strcmp (command, "pop")  == 0) return POP;
-    if (strcmp (command, "rcx")  == 0) return RCX;
-    if (strcmp (command, "rax")  == 0) return RAX;
-    if (strcmp (command, "rbx")  == 0) return RBX;
+    if (strcmp (command, "in")      == 0) return IN;
+    if (strcmp (command, "pop")     == 0) return POP;
+    if (strcmp (command, "rcx")     == 0) return RCX;
+    if (strcmp (command, "rax")     == 0) return RAX;
+    if (strcmp (command, "rbx")     == 0) return RBX;
 
     return 0;
 }
 
-void ReverseCompiler(FILE* inputFile, FILE* outputFile)
+void ReverseCompiler (FILE* inputFile, FILE* outputFile)
 {
     int code, value;
 
-    while (fscanf(inputFile, "%d", &code) != EOF) {
+    while (fscanf (inputFile, "%d", &code) != EOF) {
         switch (code) {
             case PUSH:
-                if (fscanf(inputFile, "%d", &value) != EOF)
+                if (fscanf (inputFile, "%d", &value) != EOF)
                 {
-                    fprintf(outputFile, "push  %d\n", value);
+                    fprintf (outputFile, "push  %d\n", value);
                 }
                 break;
             case ADD:
-                fprintf(outputFile, "add\n");
+                fprintf (outputFile, "add\n");
                 break;
             case SUB:
-                fprintf(outputFile, "sub\n");
+                fprintf (outputFile, "sub\n");
                 break;
             case MUL:
-                fprintf(outputFile, "mul\n");
+                fprintf (outputFile, "mul\n");
                 break;
             case DIV:
-                fprintf(outputFile, "div\n");
+                fprintf (outputFile, "div\n");
                 break;
             case SQRT:
-                fprintf(outputFile, "sqwrt\n");
+                fprintf (outputFile, "sqwrt\n");
                 break;
             case SIN:
-                fprintf(outputFile, "sin\n");
+                fprintf (outputFile, "sin\n");
                 break;
             case COS:
-                fprintf(outputFile, "cos\n");
+                fprintf (outputFile, "cos\n");
                 break;
             case OUT:
-                fprintf(outputFile, "out\n");
+                fprintf (outputFile, "out\n");
                 break;
             case HLT:
-                fprintf(outputFile, "hlt\n");
+                fprintf (outputFile, "hlt\n");
                 break;
             default:
-                fprintf(outputFile, "unknown\n");
+                fprintf (outputFile, "unknown\n");
                 break;
         }
     }
 }
 
-void CpuCtor (struct Cpu* myCpu, struct Stack* myStack)
+int BinaryRecordind (int position, char* codeArray)
 {
-    myCpu->myStack = *myStack;
-
-    myCpu -> codeArray = (char*)calloc(MAXSIZE, sizeof(char));
-    myCpu -> codeRegister = (int*)calloc(MAX_SIZE_REG, sizeof(char));
-
-    myCpu->filename = "machine_code.txt";
-    myCpu->outputfile = NULL;
-}
-
-void CpuDtor (struct Cpu* myCpu)
-{
-    StackDtor(&myCpu->myStack);
-
-    myCpu->filename = NULL;
-    myCpu->outputfile = NULL;
-
-    free(myCpu->codeArray);
-    myCpu->codeArray = NULL;
-    
-    free(myCpu->codeRegister);
-    myCpu->codeRegister = NULL;
-}
-
-int BinaryRecordind (int position, struct Cpu* myCpu)
-{
-    FILE* file = fopen("code2.bin", "wb");
+    FILE* file = fopen ("code2.bin", "wb");
 
     if (file == NULL) {
-        perror("Не удается открыть файл");
+        perror ("Не удается открыть файл");
         return 1;
     }
-    size_t elements_written = fwrite(myCpu -> codeArray, sizeof(uint8_t), position, file);
+
+    size_t elements_written1 = fwrite (&position, sizeof (int), 1, file);
+    if (elements_written1 != 1)
+    {
+        perror ("Ошибка при записи в файл");
+        fclose (file);
+        return 1;
+    }
+
+    size_t elements_written = fwrite (codeArray, sizeof (uint8_t), position, file);
 
     if (elements_written != position) {
-        perror("Ошибка при записи в файл");
-        fclose(file);
+        perror ("Ошибка при записи в файл");
+        fclose (file);
         return 1;
     }
 
-    fclose(file);
+    fclose (file);
 
-    file = fopen("code2.bin", "rb");
+    file = fopen ("code2.bin", "rb");
 
     fprintf (LOG_FILE, "ИЗ ДВОИЧНОГО ФАЙЛА\n");
     for (int i = 0; i < position; i++)
     {
-        fprintf(LOG_FILE, "%d - %08X\n", i, myCpu -> codeArray[i]);
+        fprintf (LOG_FILE, "%d - %08X\n", i, codeArray[i]);
     }
 
-    fclose(file);
+    fclose (file);
 
     return 0;
 }
+
+void CheckingSignatureAndVersion (FILE* inputFile)
+{
+    char command[256] = "";
+
+    if (fscanf (inputFile, "%s", command) != EOF && strcmp (command, "moss") != 0)
+    {
+        printf ("НЕ ТВОЙ ИСХОДНИК\n");
+        exit (1);
+    }
+
+    if (fscanf (inputFile, "%s", command) != EOF && strcmp (command, "VERSION2") != 0)
+    {
+        printf ("НЕ ТА ВЕРСИЯ\n");
+        exit (1);
+    }
+}
+

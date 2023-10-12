@@ -7,7 +7,7 @@
 FILE* LOG_FILE = stderr;
 const char* EXTENSION = ".log";
 
-void CloseLogFile()
+void CloseLogFile ()
 {
     fprintf (LOG_FILE, "ЗАКРЫТ ФАЙЛ\n");
     fprintf (LOG_FILE, "\\----------------------------------------------------\\\n");
@@ -18,7 +18,7 @@ void OpenLogFile (const char* FILE_NAME, const char* mode)
 {
     char* file_name = strdup (FILE_NAME);
 
-    LOG_FILE = fopen (strcat(file_name, EXTENSION), mode);
+    LOG_FILE = fopen (strcat (file_name, EXTENSION), mode);
 
     if (LOG_FILE == NULL)
     {

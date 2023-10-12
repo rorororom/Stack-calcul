@@ -7,6 +7,6 @@
 //!
 //!
 //! checks the data for errors and writes errors to the error variable
-int StackVerify(struct Stack* myStack);
+int StackVerify (struct Stack* myStack);
 
 #endif

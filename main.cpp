@@ -5,8 +5,9 @@
 #include "stack.h"
 #include "compiler.h"
 #include "cpu.h"
+#include "creator_cpu.h"
 
-int main()
+int main ()
 {
     OpenLogFile ("LOGE", "w");
 
@@ -18,11 +19,11 @@ int main()
     CpuCtor (&myCpu, &myStack);
     CPU_DUMP (&myCpu);
 
-    int position = Compiler (&myCpu);
+    Compiler ();
     STACK_DUMP (&myStack);
     CPU_DUMP (&myCpu);
 
-    CpuBinary(&myCpu, position);
+    CpuBinary (&myCpu);
     STACK_DUMP (&myStack);
     CPU_DUMP (&myCpu);
 
