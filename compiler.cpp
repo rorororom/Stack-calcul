@@ -56,14 +56,22 @@ int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
     {
         int code = CommandToCode (command);
 
-        if (code == PUSH && fscanf (inputFile, "%d", &value) != EOF)
+        if (code == PUSH)
         {
-            ADD_CODE_VALUE (codeArray, position, code, value, outputfile);
-        }
-        else if (code == PUSH_R && fscanf (inputFile, "%s", arg_command) != EOF)
-        {
-            argCode = CommandToCode (arg_command);
-            ADD_CODE_VALUE (codeArray, position, code, argCode, outputfile);
+            if (fscanf(inputFile, "%d", &value) == 1)
+            {
+                fprintf (outputfile, "%d %d\n", ((1 << 4) | PUSH), value);
+                codeArray[position++] = (1 << 4) | PUSH;
+                codeArray[position++] = value;
+            }
+            else if (fscanf(inputFile, "%s", arg_command) == 1)
+            {
+                argCode = CommandToCode (arg_command);
+
+                fprintf (outputfile, "%d %d\n", ((1 << 5) | PUSH), argCode);
+                codeArray[position++] = (1 << 5) | PUSH;
+                codeArray[position++] = argCode;
+            }
         }
         else if (code == IN)
         {
@@ -97,7 +105,6 @@ int CommandToCode (const char* command)
     if (strcmp (command, "cos")     == 0) return COS;
     if (strcmp (command, "out")     == 0) return OUT;
     if (strcmp (command, "hlt")     == 0) return HLT;
-    if (strcmp (command, "push_r")  == 0) return PUSH_R;
     if (strcmp (command, "in")      == 0) return IN;
     if (strcmp (command, "pop")     == 0) return POP;
     if (strcmp (command, "rcx")     == 0) return RCX;

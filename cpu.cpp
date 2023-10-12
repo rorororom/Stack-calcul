@@ -50,18 +50,32 @@ void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position)
     int i = 0;
     int value = 0;
     int code_arg = 0;
-    int aa = 0;
+    int startCode = 0;
     int code = 0;
 
     while (i < position)
     {
-        code = codeArray[i];
+        startCode = codeArray[i];
+        code = startCode & 15;
+
+        if (startCode == -1) break;
+
         switch (code)
         {
             case 1:
-                i+=1;
-                value = codeArray[i];
-                StackPush(&myCpu->myStack, value);
+                if((startCode & (1 << 5)) != 0)
+                {
+                    i++;
+                    int code_arg = codeArray[i];
+                    StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
+                }
+                else if ((startCode & (1 << 4)) != 0)
+                {
+                    i++;
+                    value = codeArray[i];
+                    StackPush(&myCpu->myStack, value);
+                }
+
                 i++;
                 break;
             case 2:
@@ -106,12 +120,6 @@ void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position)
                 i += 1;
                 code_arg = codeArray[i];
                 PopArg(myCpu, code_arg);
-                i += 1;
-                break;
-            case 33:
-                i += 1;
-                code_arg = codeArray[i];
-                StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
                 i += 1;
                 break;
             case -1:
@@ -377,3 +385,5 @@ void Cpu(struct Cpu* myCpu)
         }
     }
 }
+
+

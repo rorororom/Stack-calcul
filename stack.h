@@ -22,10 +22,10 @@ const Canary_t BUF_CANARY =  0xDEDEEDED;
 
 #define STACK_DUMP(myStack) StackDump (myStack, FILEF, LINE, __func__);
 
-#define STACK_VERIFY(myStack) {        \
+#define STACK_VERIFY(myStack) {         \
     if (StackVerify (myStack) > 0) {    \
         STACK_DUMP (myStack);           \
-    }                                  \
+    }                                   \
 }
 
 #define CALCULATE_HASH(stack) stack->hash = CalculateHash (stack)

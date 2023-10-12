@@ -1,3 +1,6 @@
+#ifndef COMPILER_H
+#define COMPILER_H
+
 #define ADD_CODE_VALUE(arr, pos, code, value, file)     \
     do {                                                \
         (arr)[(pos)++] = (code);                        \
@@ -16,3 +19,4 @@ void CheckingSignatureAndVersion (FILE* inputFile);
 
 int BinaryRecordind (int position, char* codeArray);
 
+#endif

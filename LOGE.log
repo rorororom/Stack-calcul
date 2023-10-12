@@ -1,9 +1,9 @@
 \----------------------------------------------------\
 ОТКРЫТ ФАЙЛ
 
-Time is 12:47:30
+Time is 15:43:50
 I'm stackDump called from main (16) main.cpp
-Stack[0x7ff82ac05a64] "myStack" from stack.cpp (15) in function - main.
+Stack[0x7f9795c05a64] "myStack" from stack.cpp (15) in function - main.
 
 --------------------------------------------------------------------------
 STRUCT CANARY_START = 3739151853
@@ -11,7 +11,7 @@ STRUCT CANARY_START = 3739151853
 Struct:
 	size = 0
 	capacity = 15
-	адрес data[] = 0x7ff82ac05a64
+	адрес data[] = 0x7f9795c05a64
 
 DATA CANARY LEFT  = -555815443
 DATA CANARY RIGHT = -555815443
@@ -45,7 +45,7 @@ CPU Dump:
 11 - 33
 12 - 102
 13 - 4
-14 - 1
+14 - 17
 15 - 4
 16 - 33
 17 - 101
@@ -71,7 +71,7 @@ CPU Dump:
 11 - 00000021
 12 - 00000066
 13 - 00000004
-14 - 00000001
+14 - 00000011
 15 - 00000004
 16 - 00000021
 17 - 00000065
@@ -82,35 +82,35 @@ CPU Dump:
 22 - 00000002
 23 - 00000009
 24 - FFFFFFFF
-Address: 0x7ff82ac05b30, Value: 0000000A
-Address: 0x7ff82ac05b31, Value: 0000000B
-Address: 0x7ff82ac05b32, Value: 00000065
-Address: 0x7ff82ac05b33, Value: 0000000A
-Address: 0x7ff82ac05b34, Value: 0000000B
-Address: 0x7ff82ac05b35, Value: 00000066
-Address: 0x7ff82ac05b36, Value: 0000000A
-Address: 0x7ff82ac05b37, Value: 0000000B
-Address: 0x7ff82ac05b38, Value: 00000067
-Address: 0x7ff82ac05b39, Value: 00000021
-Address: 0x7ff82ac05b3a, Value: 00000066
-Address: 0x7ff82ac05b3b, Value: 00000021
-Address: 0x7ff82ac05b3c, Value: 00000066
-Address: 0x7ff82ac05b3d, Value: 00000004
-Address: 0x7ff82ac05b3e, Value: 00000001
-Address: 0x7ff82ac05b3f, Value: 00000004
-Address: 0x7ff82ac05b40, Value: 00000021
-Address: 0x7ff82ac05b41, Value: 00000065
-Address: 0x7ff82ac05b42, Value: 00000021
-Address: 0x7ff82ac05b43, Value: 00000067
-Address: 0x7ff82ac05b44, Value: 00000004
-Address: 0x7ff82ac05b45, Value: 00000004
-Address: 0x7ff82ac05b46, Value: 00000002
-Address: 0x7ff82ac05b47, Value: 00000009
-Address: 0x7ff82ac05b48, Value: FFFFFFFF
+Address: 0x7f9795c05b30, Value: 0000000A
+Address: 0x7f9795c05b31, Value: 0000000B
+Address: 0x7f9795c05b32, Value: 00000065
+Address: 0x7f9795c05b33, Value: 0000000A
+Address: 0x7f9795c05b34, Value: 0000000B
+Address: 0x7f9795c05b35, Value: 00000066
+Address: 0x7f9795c05b36, Value: 0000000A
+Address: 0x7f9795c05b37, Value: 0000000B
+Address: 0x7f9795c05b38, Value: 00000067
+Address: 0x7f9795c05b39, Value: 00000021
+Address: 0x7f9795c05b3a, Value: 00000066
+Address: 0x7f9795c05b3b, Value: 00000021
+Address: 0x7f9795c05b3c, Value: 00000066
+Address: 0x7f9795c05b3d, Value: 00000004
+Address: 0x7f9795c05b3e, Value: 00000011
+Address: 0x7f9795c05b3f, Value: 00000004
+Address: 0x7f9795c05b40, Value: 00000021
+Address: 0x7f9795c05b41, Value: 00000065
+Address: 0x7f9795c05b42, Value: 00000021
+Address: 0x7f9795c05b43, Value: 00000067
+Address: 0x7f9795c05b44, Value: 00000004
+Address: 0x7f9795c05b45, Value: 00000004
+Address: 0x7f9795c05b46, Value: 00000002
+Address: 0x7f9795c05b47, Value: 00000009
+Address: 0x7f9795c05b48, Value: FFFFFFFF
 
-Time is 12:47:30
+Time is 15:43:50
 I'm stackDump called from main (23) main.cpp
-Stack[0x7ff82ac05a64] "myStack" from stack.cpp (15) in function - main.
+Stack[0x7f9795c05a64] "myStack" from stack.cpp (15) in function - main.
 
 --------------------------------------------------------------------------
 STRUCT CANARY_START = 3739151853
@@ -118,7 +118,7 @@ STRUCT CANARY_START = 3739151853
 Struct:
 	size = 0
 	capacity = 15
-	адрес data[] = 0x7ff82ac05a64
+	адрес data[] = 0x7f9795c05a64
 
 DATA CANARY LEFT  = -555815443
 DATA CANARY RIGHT = -555815443
@@ -133,7 +133,7 @@ CPU Dump:
 4 = 174394122
 5 = 185230859
 6 = 560341351
-7 = 67175526
+7 = 68224102
 8 = 1730241825
 9 = 151127044
      Filename: machine_code.txt
@@ -152,7 +152,7 @@ CPU Dump:
 11 - 33
 12 - 102
 13 - 4
-14 - 1
+14 - 17
 15 - 4
 16 - 33
 17 - 101
@@ -164,9 +164,9 @@ CPU Dump:
 23 - 9
 24 - -1
 
-Time is 12:47:30
+Time is 15:43:50
 I'm stackDump called from main (27) main.cpp
-Stack[0x7ff82ac05a64] "myStack" from stack.cpp (15) in function - main.
+Stack[0x7f9795c05a64] "myStack" from stack.cpp (15) in function - main.
 
 --------------------------------------------------------------------------
 STRUCT CANARY_START = 3739151853
@@ -174,7 +174,7 @@ STRUCT CANARY_START = 3739151853
 Struct:
 	size = 0
 	capacity = 15
-	адрес data[] = 0x7ff82ac05a64
+	адрес data[] = 0x7f9795c05a64
 
 DATA CANARY LEFT  = -555815443
 DATA CANARY RIGHT = -555815443
@@ -185,11 +185,11 @@ STRUCT CANARY_END = 3739151853
 CPU Dump:
 1 = 1
 2 = 6
-3 = 5
+3 = 4
 4 = 174394122
 5 = 185230859
 6 = 560341351
-7 = 67175526
+7 = 68224102
 8 = 1730241825
 9 = 151127044
      Filename: machine_code.txt

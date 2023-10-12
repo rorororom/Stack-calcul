@@ -44,3 +44,26 @@ void PrintBinary (int position, char* codeArray)
         fprintf(LOG_FILE, "Address: %p, Value: %08X\n", (void*)&codeArray[i], (unsigned int)codeArray[i]);
     }
 }
+
+int CpuVerify (struct Cpu* myCpu)
+{
+    int cnt_errors = 0;
+    if (myCpu->codeArray == NULL)
+    {
+        cnt_errors = cnt_errors | ERROR_CODE_ARRAY_BIT;
+    }
+    if (myCpu->outputfile == NULL)
+    {
+        cnt_errors = cnt_errors | ERROR_OUTPUTFILE_BIT;
+    }
+    if (myCpu->codeRegister == NULL)
+    {
+        cnt_errors = cnt_errors | ERROR_CODE_REGISTER_BIT;
+    }
+    if (myCpu->filename == NULL)
+    {
+        cnt_errors = cnt_errors | ERROR_FILENAME_BIT;
+    }
+
+    return cnt_errors;
+}

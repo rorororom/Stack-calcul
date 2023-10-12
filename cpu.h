@@ -1,3 +1,6 @@
+#ifndef CPU_H
+#define CPU_H
+
 typedef int Elem_t;
 
 #define FORMAT_SPECIFIER(type) _Generic((type), \
@@ -29,3 +32,4 @@ void CaseSin (struct Cpu* myCpu);
 void CaseCos (struct Cpu* myCpu);
 void CasePushR (struct Cpu* myCpu);
 
+#endif 

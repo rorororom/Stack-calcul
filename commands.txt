@@ -6,12 +6,12 @@ in
 pop rbx
 in
 pop rcx
-push_r rbx
-push_r rbx
+push rbx
+push rbx
 mul
 push 4
-push_r rax
-push_r rcx
+push rax
+push rcx
 mul
 mul
 sub
