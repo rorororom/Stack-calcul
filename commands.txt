@@ -1,19 +1,21 @@
 moss
 VERSION2
-in
-pop rax
-in
-pop rbx
-in
-pop rcx
-push rbx
-push rbx
-mul
-push 4
-push rax
-push rcx
-mul
-mul
-sub
-out
-hlt
+IN
+POP RAX
+IN
+POP RBX
+IN
+POP RCX
+PUSH RBX
+PUSH RBX
+MUL
+PUSH 4
+PUSH RAX
+PUSH RCX
+MUL
+MUL
+SUB
+CAT
+DOG
+OUT
+HLT

@@ -10,9 +10,34 @@ typedef int Elem_t;
     char*: "%s" \
 )
 
-#define CPU_DUMP(myCpu) CpuDump(myCpu);
+#define PROCESS_OPERATION(code)                                     \
+    if (CheckStackSizeForOperation(&myCpu->myStack)) {              \
+        number1 = StackPop(&myCpu->myStack);                        \
+        number2 = StackPop(&myCpu->myStack);                        \
+    }                                                               \
+    switch (code) {                                                 \
+        case SUB:                                                   \
+            StackPush(&myCpu->myStack, number1 - number2);          \
+            break;                                                 \
+        case ADD:                                                   \
+            StackPush(&myCpu->myStack, number1 + number2);          \
+            break;                                                 \
+        case MUL:                                                   \
+            StackPush(&myCpu->myStack, number1 * number2);          \
+            break;                                                 \
+        case DIV:                                                   \
+            if (number1 == 0) {                                     \
+                printf("Ошибка: деление на ноль недопустимо.\n");  \
+                StackPush(&myCpu->myStack, number2);                \
+                StackPush(&myCpu->myStack, number1);                \
+            } else {                                              \
+                StackPush(&myCpu->myStack, number2 / number1);      \
+            }                                                     \
+            break;                                                 \
+    }
 
-void CpuDump (struct Cpu* myCpu);
+
+#define CPU_DUMP(myCpu) CpuDump(myCpu);
 
 void Cpu(struct Cpu* myCpu);
 int CpuBinary (struct Cpu* myCpu);
@@ -22,14 +47,5 @@ void PopArg (struct Cpu* myCpu, int code);
 Elem_t return_arg (struct Cpu* myCpu, int code);
 void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position);
 
-void CasePush (struct Cpu* myCpu);
-void CaseSub (struct Cpu* myCpu);
-void CaseAdd (struct Cpu* myCpu);
-void CaseMul (struct Cpu* myCpu);
-void CaseDiv (struct Cpu* myCpu);
-void CaseSqrt (struct Cpu* myCpu);
-void CaseSin (struct Cpu* myCpu);
-void CaseCos (struct Cpu* myCpu);
-void CasePushR (struct Cpu* myCpu);
-
-#endif 
+void ArifmeticCommand (struct Cpu* myCpu, int code);
+#endif

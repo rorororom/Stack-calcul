@@ -67,3 +67,67 @@ int CpuVerify (struct Cpu* myCpu)
 
     return cnt_errors;
 }
+
+
+void CpuDump (struct Cpu* myCpu)
+{
+    fprintf(LOG_FILE, "CPU Dump:\n");
+
+    for (int i = 1; i < 2; i++)
+    {
+        fprintf (LOG_FILE, "%d = %d\n", i, myCpu->codeRegister[i]);
+    }
+
+    fprintf(LOG_FILE, "     Filename: %s\n", myCpu->filename);
+}
+
+
+
+
+// void Cpu(struct Cpu* myCpu)
+// {
+//     int code = 0;
+//
+//     while (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code), &code) != EOF)
+//     {
+//         switch (code)
+//         {
+//             case 1:
+//                 CasePush(myCpu);
+//                 break;
+//             case 2:
+//                 CaseSub(myCpu);
+//                 break;
+//             case 3:
+//                 CaseAdd(myCpu);
+//                 break;
+//             case 4:
+//                 CaseMul(myCpu);
+//                 break;
+//             case 5:
+//                 CaseDiv(myCpu);
+//                 break;
+//             case 6:
+//                 CaseSqrt(myCpu);
+//                 break;
+//             case 7:
+//                 CaseSin(myCpu);
+//                 break;
+//             case 8:
+//                 CaseCos(myCpu);
+//                 break;
+//             case 9:
+//                 printf("answer = %d\n", StackPop(&myCpu->myStack));
+//                 break;
+//             case 33:
+//                 CasePushR(myCpu);
+//                 break;
+//             case -1:
+//                 fclose(myCpu->outputfile);
+//                 break;
+//             default:
+//                 printf("Неизвестный код операции: %d\n", code);
+//                 break;
+//         }
+//     }
+// }

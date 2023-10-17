@@ -10,7 +10,7 @@
 
 
 int Compiler ();
-int CommandToCode (const char* command);
+int CommandToCodeArg (const char* command);
 void ReverseCompiler (FILE* inputFile, FILE* outputFile);
 int CheckStackSizeForOperation (struct Stack* myStack);
 int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile);

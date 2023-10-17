@@ -7,6 +7,34 @@
 #include "compiler.h"
 #include "log_funcs.h"
 
+#define DEF_CMD(name, code, has_arg_push, has_arg_pop, ...)                      \
+    if (strcmp(command, #name) == 0) {                                      \
+        cmd = code;                                                         \
+        if (has_arg_push) {                                                 \
+            if(fscanf(inputFile, "%d", &value) == 1) {                      \
+                argCode = value;                                            \
+                fprintf(outputfile, "%d %d\n", code, argCode);              \
+                codeArray[position++] = code;                               \
+                codeArray[position++] = argCode;                            \
+            } else if(fscanf(inputFile, "%s", arg_command) == 1) {          \
+                argCode = CommandToCodeArg(arg_command);                    \
+                fprintf(outputfile, "%d %d\n", ((1 << 5) | code), argCode); \
+                codeArray[position++] = ((1 << 5) | code);                               \
+                codeArray[position++] = argCode;                            \
+            }                                                               \
+        } else if (has_arg_pop) {                                           \
+            if (fscanf(inputFile, "%s", arg_command) != EOF) {              \
+                argCode = CommandToCodeArg(arg_command);                    \
+                fprintf(outputfile, "%d %d\n", code, argCode);              \
+                codeArray[position++] = code;                               \
+                codeArray[position++] = argCode;                            \
+            }                                                               \
+        } else {                                                            \
+            codeArray[position++] = code;                                   \
+            fprintf(outputfile, "%d\n", code);                              \
+        }                                                                   \
+    }
+
 int Compiler ()
 {
     FILE* inputFile = fopen ("commands.txt", "r");
@@ -51,68 +79,17 @@ int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
 
     int position = 0;
     int argCode = 0;
+    int cmd = 0;
 
-    while (fscanf (inputFile, "%s", command) != EOF)
+    while (fscanf(inputFile, "%s", command) != EOF)
     {
-        int code = CommandToCode (command);
-
-        if (code == PUSH)
-        {
-            if (fscanf(inputFile, "%d", &value) == 1)
-            {
-                fprintf (outputfile, "%d %d\n", ((1 << 4) | PUSH), value);
-                codeArray[position++] = (1 << 4) | PUSH;
-                codeArray[position++] = value;
-            }
-            else if (fscanf(inputFile, "%s", arg_command) == 1)
-            {
-                argCode = CommandToCode (arg_command);
-
-                fprintf (outputfile, "%d %d\n", ((1 << 5) | PUSH), argCode);
-                codeArray[position++] = (1 << 5) | PUSH;
-                codeArray[position++] = argCode;
-            }
-        }
-        else if (code == IN)
-        {
-            codeArray[position++] = code;
-            fprintf (outputfile, "%d\n", code);
-        }
-        else if (code == POP && fscanf (inputFile, "%s", arg_command) != EOF)
-        {
-            argCode = CommandToCode (arg_command);
-            ADD_CODE_VALUE (codeArray, position, code, argCode, outputfile);
-        }
-        else
-        {
-            codeArray[position++] = code;
-            fprintf (outputfile, "%d\n", code);
-        }
+        #include "commands.h"
     }
+    #undef DEF_CMD
 
     return position;
 }
 
-int CommandToCode (const char* command)
-{
-    if (strcmp (command, "push")    == 0) return PUSH;
-    if (strcmp (command, "sub")     == 0) return SUB;
-    if (strcmp (command, "add")     == 0) return ADD;
-    if (strcmp (command, "mul")     == 0) return MUL;
-    if (strcmp (command, "div")     == 0) return DIV;
-    if (strcmp (command, "sqrt")    == 0) return SQRT;
-    if (strcmp (command, "sin")     == 0) return SIN;
-    if (strcmp (command, "cos")     == 0) return COS;
-    if (strcmp (command, "out")     == 0) return OUT;
-    if (strcmp (command, "hlt")     == 0) return HLT;
-    if (strcmp (command, "in")      == 0) return IN;
-    if (strcmp (command, "pop")     == 0) return POP;
-    if (strcmp (command, "rcx")     == 0) return RCX;
-    if (strcmp (command, "rax")     == 0) return RAX;
-    if (strcmp (command, "rbx")     == 0) return RBX;
-
-    return 0;
-}
 
 void ReverseCompiler (FILE* inputFile, FILE* outputFile)
 {
@@ -120,37 +97,37 @@ void ReverseCompiler (FILE* inputFile, FILE* outputFile)
 
     while (fscanf (inputFile, "%d", &code) != EOF) {
         switch (code) {
-            case PUSH:
+            case CMD_PUSH:
                 if (fscanf (inputFile, "%d", &value) != EOF)
                 {
                     fprintf (outputFile, "push  %d\n", value);
                 }
                 break;
-            case ADD:
+            case CMD_ADD:
                 fprintf (outputFile, "add\n");
                 break;
-            case SUB:
+            case CMD_SUB:
                 fprintf (outputFile, "sub\n");
                 break;
-            case MUL:
+            case CMD_MUL:
                 fprintf (outputFile, "mul\n");
                 break;
-            case DIV:
+            case CMD_DIV:
                 fprintf (outputFile, "div\n");
                 break;
-            case SQRT:
+            case CMD_SQRT:
                 fprintf (outputFile, "sqwrt\n");
                 break;
-            case SIN:
+            case CMD_SIN:
                 fprintf (outputFile, "sin\n");
                 break;
-            case COS:
+            case CMD_COS:
                 fprintf (outputFile, "cos\n");
                 break;
-            case OUT:
+            case CMD_OUT:
                 fprintf (outputFile, "out\n");
                 break;
-            case HLT:
+            case CMD_HLT:
                 fprintf (outputFile, "hlt\n");
                 break;
             default:
@@ -158,6 +135,15 @@ void ReverseCompiler (FILE* inputFile, FILE* outputFile)
                 break;
         }
     }
+}
+
+int CommandToCodeArg (const char* command)
+{
+    if (strcmp (command, "RCX")     == 0) return CMD_RCX;
+    if (strcmp (command, "RAX")     == 0) return CMD_RAX;
+    if (strcmp (command, "RBX")     == 0) return CMD_RBX;
+
+    return 0;
 }
 
 int BinaryRecordind (int position, char* codeArray)

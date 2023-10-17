@@ -7,13 +7,21 @@
 #include "cpu.h"
 #include "log_funcs.h"
 
+#define DEF_CMD(name, num, has_arg_push, has_arg_pop, code)    \
+    case CMD_##name:                                          \
+        code                                                  \
+        i++;                                                  \
+        break;
+
+
 int CpuBinary (struct Cpu* myCpu)
 {
     int code = 0;
     FILE* file = fopen("code2.bin", "rb");
 
     int position = 0;
-    if (fread(&position, sizeof(int), 1, file) != 1) {
+    if (fread(&position, sizeof(int), 1, file) != 1)
+    {
         perror("!Ошибка при чтении из файла");
         fclose(file);
         return 1;
@@ -21,7 +29,8 @@ int CpuBinary (struct Cpu* myCpu)
 
     char* codeArray = (char*)calloc(position, sizeof(char));
 
-    if (codeArray == NULL) {
+    if (codeArray == NULL)
+    {
         perror("Не удается выделить память");
         fclose(file);
         return 1;
@@ -29,7 +38,8 @@ int CpuBinary (struct Cpu* myCpu)
 
     printf("position = %d\n", position);
 
-    if (fread(codeArray, sizeof(char), position, file) != position) {
+    if (fread(codeArray, sizeof(char), position, file) != position)
+    {
         perror("Ошибка при чтении из файла");
         free(codeArray);
         fclose(file);
@@ -52,85 +62,32 @@ void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position)
     int code_arg = 0;
     int startCode = 0;
     int code = 0;
+    int number1 = 0;
+    int number2 = 0;
 
     while (i < position)
     {
         startCode = codeArray[i];
-        code = startCode & 15;
+        code = startCode & 31;
 
-        if (startCode == -1) break;
+        int exponent = 0, base = 0, result = 0;
+
+        if (startCode == -1)
+        {
+            fclose(myCpu->outputfile);
+            break;
+        }
 
         switch (code)
         {
-            case 1:
-                if((startCode & (1 << 5)) != 0)
-                {
-                    i++;
-                    int code_arg = codeArray[i];
-                    StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
-                }
-                else if ((startCode & (1 << 4)) != 0)
-                {
-                    i++;
-                    value = codeArray[i];
-                    StackPush(&myCpu->myStack, value);
-                }
+            #include "commands.h"
 
-                i++;
-                break;
-            case 2:
-                CaseSub(myCpu);
-                i++;
-                break;
-            case 3:
-                CaseAdd(myCpu);
-                i++;
-                break;
-            case 4:
-                CaseMul(myCpu);
-                i++;
-                break;
-            case 5:
-                CaseDiv(myCpu);
-                i++;
-                break;
-            case 6:
-                CaseSqrt(myCpu);
-                i++;
-                break;
-            case 7:
-                CaseSin(myCpu);
-                i++;
-                break;
-            case 8:
-                CaseCos(myCpu);
-                i++;
-                break;
-            case 9:
-                printf("answer = %d\n", StackPop(&myCpu->myStack));
-                i++;
-                break;
-            case 10:
-                printf("Введите число\n");
-                scanf("%d", &value);
-                StackPush(&myCpu->myStack, value);
-                i++;
-                break;
-            case 11:
-                i += 1;
-                code_arg = codeArray[i];
-                PopArg(myCpu, code_arg);
-                i += 1;
-                break;
-            case -1:
-                fclose(myCpu->outputfile);
-                i++;
-                break;
             default:
                 printf("Неизвестный код операции: %d\n", code);
                 i++;
                 break;
         }
+        #undef DEF_CMD
     }
 }
 
@@ -183,207 +140,21 @@ int CheckStackSizeForOperation (struct Stack* myStack)
 {
     if (GetSizeStack(myStack) < 2)
     {
-        printf("Ошибка: недостаточно элементов в стеке для выполнения операции sum.\n");
+        printf("Ошибка: недостаточно элементов в стеке для выполнения операции.\n");
         return 0;
     }
     return 1;
 }
 
-void CasePush (struct Cpu* myCpu)
-{
-    int value = 0;
-
-    if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(value), &value) != EOF)
-    {
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CaseSub (struct Cpu* myCpu)
+void ArifmeticCommand (struct Cpu* myCpu, int code)
 {
     Elem_t number1 = 0, number2 = 0;
-    int value = 0;
 
     if (CheckStackSizeForOperation(&myCpu->myStack))
     {
         number1 = StackPop(&myCpu->myStack);
         number2 = StackPop(&myCpu->myStack);
 
-        value = number2 - number1;
-
-        StackPush(&myCpu->myStack, value);
     }
 }
-
-void CaseAdd (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0, number2 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-        number2 = StackPop(&myCpu->myStack);
-
-        value = number2 + number1;
-
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CaseMul (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0, number2 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-        number2 = StackPop(&myCpu->myStack);
-
-        value = number2 * number1;
-
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CaseDiv (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0, number2 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-        number2 = StackPop(&myCpu->myStack);
-
-        if (number1 == 0)
-        {
-            printf("Ошибка: деление на ноль недопустимо.\n");
-            StackPush(&myCpu->myStack, number2);
-            StackPush(&myCpu->myStack, number1);
-        }
-        else
-        {
-            value = number2 / number1;
-            StackPush(&myCpu->myStack, value);
-        }
-    }
-}
-
-void CaseSqrt (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-
-        value = number1 * 0.5;
-
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CaseSin (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-
-        value = sin(number1);
-
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CaseCos (struct Cpu* myCpu)
-{
-    Elem_t number1 = 0;
-    int value = 0;
-
-    if (CheckStackSizeForOperation(&myCpu->myStack))
-    {
-        number1 = StackPop(&myCpu->myStack);
-
-        value = cos(number1);
-
-        StackPush(&myCpu->myStack, value);
-    }
-}
-
-void CasePushR (struct Cpu* myCpu)
-{
-    int code_arg = 0;
-
-    if (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code_arg), &code_arg) != EOF)
-    {
-        StackPush(&myCpu->myStack, return_arg(myCpu, code_arg));
-    }
-}
-
-void CpuDump (struct Cpu* myCpu)
-{
-    fprintf(LOG_FILE, "CPU Dump:\n");
-
-    for (int i = 1; i < MAX_SIZE_REG; i++)
-    {
-        fprintf (LOG_FILE, "%d = %d\n", i, myCpu->codeRegister[i]);
-    }
-
-    fprintf(LOG_FILE, "     Filename: %s\n", myCpu->filename);
-}
-
-void Cpu(struct Cpu* myCpu)
-{
-    int code = 0;
-
-    while (fscanf(myCpu->outputfile, FORMAT_SPECIFIER(code), &code) != EOF)
-    {
-        switch (code)
-        {
-            case 1:
-                CasePush(myCpu);
-                break;
-            case 2:
-                CaseSub(myCpu);
-                break;
-            case 3:
-                CaseAdd(myCpu);
-                break;
-            case 4:
-                CaseMul(myCpu);
-                break;
-            case 5:
-                CaseDiv(myCpu);
-                break;
-            case 6:
-                CaseSqrt(myCpu);
-                break;
-            case 7:
-                CaseSin(myCpu);
-                break;
-            case 8:
-                CaseCos(myCpu);
-                break;
-            case 9:
-                printf("answer = %d\n", StackPop(&myCpu->myStack));
-                break;
-            case 33:
-                CasePushR(myCpu);
-                break;
-            case -1:
-                fclose(myCpu->outputfile);
-                break;
-            default:
-                printf("Неизвестный код операции: %d\n", code);
-                break;
-        }
-    }
-}
-
 

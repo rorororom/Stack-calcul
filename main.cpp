@@ -9,7 +9,7 @@
 
 int main ()
 {
-    OpenLogFile ("LOGE", "w");
+    OpenLogFile ("LOGE.log", "w");
 
     Stack myStack = {};
     StackCtor (&myStack);

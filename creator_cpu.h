@@ -13,24 +13,16 @@
     }                               \
 }
 
-enum {
-    PUSH = 1,
-    SUB, //2
-    ADD, //3
-    MUL, //4
-    DIV, //5
-    SQRT,//6
-    SIN, //7
-    COS, //8
-    OUT, //9
-    IN, //10
-    POP, //11
-    HLT = -1,
-    RAX = 101,
-    RBX = 102,
-    RCX = 103,
-    RDX = 104,
+#define DEF_CMD(name, num, ...)     \
+        CMD_##name = num,
+
+enum Commands
+{
+    #include "commands.h"
 };
+
+#undef DEF_CMD
+
 
 enum CpuErrors {
     ERROR_FILENAME_BIT        = 1,
@@ -49,6 +41,7 @@ struct Cpu {
 
 void CpuCtor (struct Cpu* myCpu, struct Stack* myStack);
 void CpuDtor (struct Cpu* myCpu);
+void CpuDump (struct Cpu* myCpu);
 
 void CommandPrintout (int position, char* codeArray);
 void PrintBinary (int position, char* codeArray);
