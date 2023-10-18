@@ -39,11 +39,7 @@ typedef int Elem_t;
 
 #define CPU_DUMP(myCpu) CpuDump(myCpu);
 
-void Cpu(struct Cpu* myCpu);
-int CpuBinary (struct Cpu* myCpu);
 int CheckStackSizeForOperation (struct Stack* myStack);
-int call_arg (struct Cpu* myCpu, char arg_rAx[]);
-void PopArg (struct Cpu* myCpu, int code);
 Elem_t return_arg (struct Cpu* myCpu, int code);
 void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position);
 

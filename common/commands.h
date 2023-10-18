@@ -105,7 +105,7 @@ DEF_CMD(POP,   11, 0, 1,
     {
         i += 1;
         code_arg = codeArray[i];
-        PopArg(myCpu, code_arg);
+        return_arg(myCpu, code_arg);
     })
 DEF_CMD(MATAN, 12, 0, 0,
     {

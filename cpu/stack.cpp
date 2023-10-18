@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#include "log_funcs.h"
+#include "stack.h"
+
+#define CAPACITY 1000
+#define UP_KOEF 2
+#define DOWN_KOEF 0.5
+
+void StackCtor(struct Stack* myStack) {
+    myStack->capacity = CAPACITY;
+    myStack->size = 0;
+    myStack->data = (Elem_t*)malloc(sizeof(Elem_t) * myStack->capacity);
+}
+
+void StackPush(struct Stack* myStack, Elem_t value) {
+    if (myStack->size >= myStack->capacity) {
+        // Если стек заполнился, увеличиваем его размер
+        myStack->capacity *= UP_KOEF;
+        myStack->data = (Elem_t*)realloc(myStack->data, sizeof(Elem_t) * myStack->capacity);
+    }
+    myStack->data[myStack->size++] = value;
+}
+
+Elem_t StackPop(struct Stack* myStack) {
+    assert(myStack->size > 0);  // Убедимся, что стек не пуст
+
+    Elem_t value = myStack->data[--myStack->size];
+    return value;
+}
+
+void StackDump (struct Stack* myStack, const char *file, int line, const char *function)
+{
+    fprintf (LOG_FILE, "\nTime is %s\n", __TIME__);
+    fprintf (LOG_FILE, "I'm stackDump called from %s (%d) %s\n", function, line, file);
+    fprintf (LOG_FILE, "Stack[%p] \"myStack\" from %s (%d) in function - %s.\n\n", myStack->data, FILEF, LINE, function);
+
+    fprintf (LOG_FILE, "--------------------------------------------------------------------------\n");
+    fprintf (LOG_FILE, "Struct:\n");
+    fprintf (LOG_FILE, "\tsize = %d\n", myStack->size);
+    fprintf (LOG_FILE, "\tcapacity = %d\n", myStack->capacity);
+    fprintf (LOG_FILE, "\tадрес data[] = %p\n", myStack->data);
+
+    int now_size = myStack->size;
+    for (int i = 0; i < now_size; i++)
+    {
+        fprintf (LOG_FILE, "\tdata[%d] = %d\n", i, myStack->data[i]);
+    }
+    fprintf (LOG_FILE, "--------------------------------------------------------------------------\n");
+}
+
+
+void StackDtor(struct Stack* myStack) {
+    free(myStack->data);
+    myStack->data = NULL;
+    myStack->capacity = 0;
+    myStack->size = 0;
+}
+
+void StackRealloc(struct Stack* myStack, float koef_capacity) {
+    // Пример уменьшения размера стека при необходимости
+    if (myStack->size < (myStack->capacity) / DOWN_KOEF) {
+        myStack->capacity *= DOWN_KOEF;
+        myStack->data = (Elem_t*)realloc(myStack->data, sizeof(Elem_t) * myStack->capacity);
+    }
+}
+
+int GetSizeStack (struct Stack* myStack)
+{
+    return myStack->size;
+}
+
+
+
+
+
+
+

@@ -4,7 +4,7 @@
 #include "log_funcs.h"
 #include "stack.h"
 #include "compiler.h"
-#include "cpu.h"
+#include "cpu/cpu.h"
 #include "creator_cpu.h"
 
 int main ()
@@ -15,15 +15,7 @@ int main ()
     StackCtor (&myStack);
     STACK_DUMP (&myStack);
 
-    struct Cpu myCpu = {};
-    CpuCtor (&myCpu, &myStack);
-    CPU_DUMP (&myCpu);
-
     Compiler ();
-    STACK_DUMP (&myStack);
-    CPU_DUMP (&myCpu);
-
-    CpuBinary (&myCpu);
     STACK_DUMP (&myStack);
     CPU_DUMP (&myCpu);
 

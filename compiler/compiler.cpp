@@ -3,9 +3,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "creator_cpu.h"
+#include "../common/log_funcs.h.h"
+
 #include "compiler.h"
-#include "log_funcs.h"
 
 #define DEF_CMD(name, code, has_arg_push, has_arg_pop, ...)                      \
     if (strcmp(command, #name) == 0) {                                      \
@@ -34,42 +34,6 @@
             fprintf(outputfile, "%d\n", code);                              \
         }                                                                   \
     }
-
-int Compiler ()
-{
-    FILE* inputFile = fopen ("commands.txt", "r");
-    if (inputFile == NULL) {
-        perror ("Не удается открыть файл");
-        return 1;
-    }
-
-    FILE* outputfile = fopen ("machine_code.txt", "w");
-    if (outputfile == NULL) {
-        return 1;
-    }
-
-    char* codeArray = (char*)calloc (MAXSIZE, sizeof (char));
-    int* codeRegister = (int*)calloc (MAX_SIZE_REG, sizeof (char));
-
-    CheckingSignatureAndVersion (inputFile);
-
-    int position = GenerateCodeFromInput (inputFile, codeArray, outputfile);
-
-    CommandPrintout (position, codeArray);
-
-    BinaryRecordind (position, codeArray);
-
-    PrintBinary (position, codeArray);
-
-    fclose (outputfile);
-
-    outputfile = fopen ("machine_code.txt", "r");
-    if (outputfile == NULL) {
-        return 1;
-    }
-
-    return 0;
-}
 
 int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
 {
@@ -200,6 +164,23 @@ void CheckingSignatureAndVersion (FILE* inputFile)
     {
         printf ("НЕ ТА ВЕРСИЯ\n");
         exit (1);
+    }
+}
+
+void CommandPrintout (int position, char* codeArray)
+{
+    fprintf (LOG_FILE, "МАССИВ КОМАНД\n");
+    for (int i = 0; i < position; i++)
+    {
+        fprintf (LOG_FILE, "%d - %d\n", i, codeArray[i]);
+    }
+}
+
+void PrintBinary (int position, char* codeArray)
+{
+    for (int i = 0; i < position; i++)
+    {
+        fprintf(LOG_FILE, "Address: %p, Value: %08X\n", (void*)&codeArray[i], (unsigned int)codeArray[i]);
     }
 }
 

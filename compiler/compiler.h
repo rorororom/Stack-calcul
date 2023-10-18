@@ -8,6 +8,8 @@
         fprintf ( (file), "%d  %d\n", (code), (value));   \
     } while (0)
 
+#define MAXSIZE 100
+#define MAX_SIZE_REG 10
 
 int Compiler ();
 int CommandToCodeArg (const char* command);
@@ -16,6 +18,8 @@ int CheckStackSizeForOperation (struct Stack* myStack);
 int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile);
 
 void CheckingSignatureAndVersion (FILE* inputFile);
+void CommandPrintout (int position, char* codeArray);
+void PrintBinary (int position, char* codeArray);
 
 int BinaryRecordind (int position, char* codeArray);
 

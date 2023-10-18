@@ -14,47 +14,6 @@
         break;
 
 
-int CpuBinary (struct Cpu* myCpu)
-{
-    int code = 0;
-    FILE* file = fopen("code2.bin", "rb");
-
-    int position = 0;
-    if (fread(&position, sizeof(int), 1, file) != 1)
-    {
-        perror("!Ошибка при чтении из файла");
-        fclose(file);
-        return 1;
-    }
-
-    char* codeArray = (char*)calloc(position, sizeof(char));
-
-    if (codeArray == NULL)
-    {
-        perror("Не удается выделить память");
-        fclose(file);
-        return 1;
-    }
-
-    printf("position = %d\n", position);
-
-    if (fread(codeArray, sizeof(char), position, file) != position)
-    {
-        perror("Ошибка при чтении из файла");
-        free(codeArray);
-        fclose(file);
-        return 1;
-    }
-
-    fclose(file);
-
-    CommandPrintout (position, codeArray);
-
-    ProcessCodeArray(myCpu, codeArray, position);
-
-    return 0;
-}
-
 void ProcessCodeArray (struct Cpu* myCpu, char* codeArray, int position)
 {
     int i = 0;
@@ -113,27 +72,6 @@ Elem_t return_arg (struct Cpu* myCpu, int code)
     }
 
     return 0;
-}
-
-void PopArg (struct Cpu* myCpu, int code)
-{
-    switch (code)
-    {
-        case 101:
-            myCpu->codeRegister[1] = StackPop(&myCpu->myStack);
-            break;
-        case 102:
-            myCpu->codeRegister[2] = StackPop(&myCpu->myStack);
-            break;
-        case 103:
-            myCpu->codeRegister[3] = StackPop(&myCpu->myStack);
-            break;
-        case 104:
-            break;
-        default:
-            printf("!!!!!Неизвестный регистр: %d\n", code);
-            break;
-    }
 }
 
 int CheckStackSizeForOperation (struct Stack* myStack)

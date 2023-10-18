@@ -7,7 +7,7 @@ typedef int Canary_t;
 const int SIZE = 10;
 const int CAPACITY = SIZE + 5;
 const int HASH_CONST = 234;
-const int XOR_CONST = 555555555;
+const int XOR_CONST = 3;
 const int MOD_FOR_HASH = 107;
 const Elem_t POISONELEMENT = -1;
 const int DOP_RIGHT = 1;
@@ -125,7 +125,7 @@ void PrintStackErrors (int sum_errors);
 //!
 //!
 //! recalculates the hash after changes
-long long CalculateHash (struct Stack* myStack);
+int CalculateHash (struct Stack* myStack);
 
 //! @brief the pointer left canary
 //! @param [in]  myStack all structure data

@@ -4,9 +4,6 @@
 #include "stack.h"
 #include <stdio.h>
 
-#define MAXSIZE 100
-#define MAX_SIZE_REG 10
-
 #define CPU_VERIFY(myCpu) {         \
     if (CpuVerify (myCpu) > 0) {    \
         CPU_DUMP (myCpu);           \
@@ -43,8 +40,6 @@ void CpuCtor (struct Cpu* myCpu, struct Stack* myStack);
 void CpuDtor (struct Cpu* myCpu);
 void CpuDump (struct Cpu* myCpu);
 
-void CommandPrintout (int position, char* codeArray);
-void PrintBinary (int position, char* codeArray);
 int CpuVerify (struct Cpu* myCpu);
 
 #endif
