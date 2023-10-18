@@ -1,7 +1,7 @@
 #ifndef CREATOR_CPU
 #define CREATOR_CPU
 
-#include "stack.h"
+#include "../cpu/stack.h"
 #include <stdio.h>
 
 #define CPU_VERIFY(myCpu) {         \
@@ -15,7 +15,7 @@
 
 enum Commands
 {
-    #include "commands.h"
+    #include "../common/commands.h"
 };
 
 #undef DEF_CMD

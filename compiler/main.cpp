@@ -9,13 +9,17 @@
 
 int main ()
 {
-    FILE* inputFile = fopen ("commands.txt", "r");
+    OpenLogFile ("LOGE.log", "w");
+
+    FILE* inputFile = fopen ("../assets/commands.txt", "r");
     if (inputFile == NULL) {
         perror ("Не удается открыть файл\n");
         return 1;
     }
 
-    FILE* outputfile = fopen ("machine_code.txt", "w");
+    printf ("adfg\n");
+
+    FILE* outputfile = fopen ("../assets/machine_code.txt", "w");
     if (outputfile == NULL) {
         return 1;
     }
@@ -35,7 +39,7 @@ int main ()
 
     fclose (outputfile);
 
-    outputfile = fopen ("machine_code.txt", "r");
+    outputfile = fopen ("../assets/machine_code.txt", "r");
     if (outputfile == NULL) {
         return 1;
     }

@@ -1,5 +1,5 @@
 CXX = g++-13
-EXECUTABLE = spu
+EXECUTABLE = cpu
 CXXFLAGS =  -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations \
 			-Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts       \
 			-Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal  \
@@ -16,20 +16,20 @@ CXXFLAGS =  -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-
 COMMON_DIR = ../common
 SOURCES = main.cpp stack.cpp cpu.cpp creator_cpu.cpp
 OUT_SOURCES = ../common/log_funcs.cpp ../common/error_func.cpp
-OBJECTS = $(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
-OUT_OBJECTS = $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=$(OBJECTS_DIR)/%.o)
+# OBJECTS = $(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
+# OUT_OBJECTS = $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=$(OBJECTS_DIR)/%.o)
 
 .PHONY: all
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS) $(OUT_OBJECTS)
-	$(CXX) $^ -o $@ $(CXXFLAGS)
+# $(EXECUTABLE): $(OBJECTS) $(OUT_OBJECTS)
+# 	$(CXX) $^ -o $@ $(CXXFLAGS)
 
-$(OBJECTS_DIR)/%.o: $(COMMON_DIR)/%.cpp
-	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
-
-$(OBJECTS_DIR)/%.o: %.cpp
-	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
+# $(OBJECTS_DIR)/%.o: $(COMMON_DIR)/%.cpp
+# 	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
+#
+# $(OBJECTS_DIR)/%.o: %.cpp
+# 	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
 
 .PHONY: clean makedirs test
 
@@ -37,7 +37,4 @@ clean:
 	rm -rf $(EXECUTABLE) $(OBJECTS_DIR)/*.o *.o
 	rm -rf *.log
 
-makedirs:
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(OBJECTS_DIR)
 

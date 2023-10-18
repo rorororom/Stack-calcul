@@ -3,7 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#include "../common/log_funcs.h.h"
+#include "../common/log_funcs.h"
+#include "../cpu/creator_cpu.h"
 
 #include "compiler.h"
 
@@ -19,7 +20,7 @@
             } else if(fscanf(inputFile, "%s", arg_command) == 1) {          \
                 argCode = CommandToCodeArg(arg_command);                    \
                 fprintf(outputfile, "%d %d\n", ((1 << 5) | code), argCode); \
-                codeArray[position++] = ((1 << 5) | code);                               \
+                codeArray[position++] = ((1 << 5) | code);                  \
                 codeArray[position++] = argCode;                            \
             }                                                               \
         } else if (has_arg_pop) {                                           \
@@ -47,7 +48,7 @@ int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
 
     while (fscanf(inputFile, "%s", command) != EOF)
     {
-        #include "commands.h"
+        #include "../common/commands.h"
     }
     #undef DEF_CMD
 
@@ -137,7 +138,7 @@ int BinaryRecordind (int position, char* codeArray)
 
     fclose (file);
 
-    file = fopen ("code2.bin", "rb");
+    file = fopen ("../assets/code2.bin", "rb");
 
     fprintf (LOG_FILE, "ИЗ ДВОИЧНОГО ФАЙЛА\n");
     for (int i = 0; i < position; i++)
