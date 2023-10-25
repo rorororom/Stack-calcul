@@ -1,187 +1,239 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #include "../common/log_funcs.h"
-#include "../cpu/creator_cpu.h"
+#include "../common/const.h"
 
 #include "compiler.h"
 
-#define DEF_CMD(name, code, has_arg_push, has_arg_pop, ...)                      \
-    if (strcmp(command, #name) == 0) {                                      \
-        cmd = code;                                                         \
-        if (has_arg_push) {                                                 \
-            if(fscanf(inputFile, "%d", &value) == 1) {                      \
-                argCode = value;                                            \
-                fprintf(outputfile, "%d %d\n", code, argCode);              \
-                codeArray[position++] = code;                               \
-                codeArray[position++] = argCode;                            \
-            } else if(fscanf(inputFile, "%s", arg_command) == 1) {          \
-                argCode = CommandToCodeArg(arg_command);                    \
-                fprintf(outputfile, "%d %d\n", ((1 << 5) | code), argCode); \
-                codeArray[position++] = ((1 << 5) | code);                  \
-                codeArray[position++] = argCode;                            \
-            }                                                               \
-        } else if (has_arg_pop) {                                           \
-            if (fscanf(inputFile, "%s", arg_command) != EOF) {              \
-                argCode = CommandToCodeArg(arg_command);                    \
-                fprintf(outputfile, "%d %d\n", code, argCode);              \
-                codeArray[position++] = code;                               \
-                codeArray[position++] = argCode;                            \
-            }                                                               \
-        } else {                                                            \
-            codeArray[position++] = code;                                   \
-            fprintf(outputfile, "%d\n", code);                              \
-        }                                                                   \
+#define DEF_CMD(name, code, has_arg, action)                                            \
+    if (position >= MAXSIZE) assert(0);                                                 \
+    registerFlag = 0;                                                                   \
+    if (source->textArray[cnt][0] == ':')                                               \
+        {                                                                               \
+            if (source->labels[source->textArray[cnt][1] - '0'] == -1)                  \
+            {                                                                           \
+                source->labels[source->textArray[cnt][1] - '0'] = source->position;     \
+            }                                                                           \
+            cnt++;                                                                      \
+        }                                                                               \
+    else if (strcmp(source->textArray[cnt], #name) == 0)                                \
+    {                                                                                   \
+        cmd = code;                                                                     \
+        if (has_arg)                                                                    \
+        {                                                                               \
+            argCode = ArgCode(source, &registerFlag, cnt);                              \
+            if (registerFlag)                                                           \
+            {                                                                           \
+                cmd = cmd | (1 << 5);                                                   \
+            }                                                                           \
+            fprintf(outputfile, "%d %d\n", cmd, argCode);                               \
+            source->codeArray[source->position++] = cmd;                                \
+            source->codeArray[source->position++] = argCode;                            \
+            cnt += 2;                                                                   \
+        }                                                                               \
+        else {                                                                          \
+            source->codeArray[source->position++] = cmd;                                \
+            cnt++;                                                                      \
+            fprintf(outputfile, "%d\n", code);                                          \
+        }                                                                               \
     }
 
-int GenerateCodeFromInput (FILE* inputFile, char* codeArray, FILE* outputfile)
+void GenerateCodeFromInput(struct Compiler *source, FILE* outputfile)
 {
-    char command[256] = "";
-    char arg_command[256] = "";
-    int value = 0;
+    assert(source != NULL);
+    assert(outputfile != NULL);
 
-    int position = 0;
-    int argCode = 0;
-    int cmd = 0;
+    int value = 0, position = 0, argCode = 0, cmd = 0, cnt = 0;
+    int numberStop = -1, registerFlag = 0;
 
-    while (fscanf(inputFile, "%s", command) != EOF)
+    source->capacity = INITIAL_CAPACITY;
+
+    source->codeArray = (int *)malloc(source->capacity * sizeof(int));
+    if (source->codeArray == NULL)
+    {
+        fprintf(stderr, "Ошибка: Не удалось выделить память для codeArray\n");
+    }
+
+    InitializationUnknownMarks (source);
+    InitializationLabels (source);
+
+    while (cnt < source->words)
     {
         #include "../common/commands.h"
+
     }
     #undef DEF_CMD
 
-    return position;
+    ResolveUnknownMarks (source);
 }
 
-
-void ReverseCompiler (FILE* inputFile, FILE* outputFile)
+int ArgCode(struct Compiler *source, int* RegisterFlag, int cnt)
 {
-    int code, value;
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+    assert(RegisterFlag != NULL);
 
-    while (fscanf (inputFile, "%d", &code) != EOF) {
-        switch (code) {
-            case CMD_PUSH:
-                if (fscanf (inputFile, "%d", &value) != EOF)
-                {
-                    fprintf (outputFile, "push  %d\n", value);
-                }
-                break;
-            case CMD_ADD:
-                fprintf (outputFile, "add\n");
-                break;
-            case CMD_SUB:
-                fprintf (outputFile, "sub\n");
-                break;
-            case CMD_MUL:
-                fprintf (outputFile, "mul\n");
-                break;
-            case CMD_DIV:
-                fprintf (outputFile, "div\n");
-                break;
-            case CMD_SQRT:
-                fprintf (outputFile, "sqwrt\n");
-                break;
-            case CMD_SIN:
-                fprintf (outputFile, "sin\n");
-                break;
-            case CMD_COS:
-                fprintf (outputFile, "cos\n");
-                break;
-            case CMD_OUT:
-                fprintf (outputFile, "out\n");
-                break;
-            case CMD_HLT:
-                fprintf (outputFile, "hlt\n");
-                break;
-            default:
-                fprintf (outputFile, "unknown\n");
-                break;
-        }
+    int value = 0;
+
+    if ('0' <= source->textArray[cnt + 1][0] && source->textArray[cnt + 1][0] <= '9')
+    {
+        return atoi(source->textArray[cnt + 1]);
     }
+    else {
+        if (source->textArray[cnt + 1][0] == ':')
+        {
+            if (source->labels[source->textArray[cnt + 1][1] - '0'] == -1)
+            {
+                source->unknownMarks[source->cntUnknownMarks++] = cnt + 1;
+                source->unknownMarks[source->cntUnknownMarks++] = source->position + 1;
+                return -100;
+            }
+            else
+            {
+                return source->labels[source->textArray[cnt + 1][1] - '0'];
+            }
+        }
+        *RegisterFlag += 1;
+        return ReturnArg(source, cnt + 1);
+    }
+    return value;
 }
 
-int CommandToCodeArg (const char* command)
+int ReturnArg (struct Compiler *source, int i)
 {
-    if (strcmp (command, "RCX")     == 0) return CMD_RCX;
-    if (strcmp (command, "RAX")     == 0) return CMD_RAX;
-    if (strcmp (command, "RBX")     == 0) return CMD_RBX;
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
+    CHECK_REGISTER("RCX", RCX);
+    CHECK_REGISTER("RAX", RAX);
+    CHECK_REGISTER("RBX", RBX);
+
+    else
+    {
+        printf ("Ошибка: неправильный аргумент = %s\n", source->textArray[i]);
+        fprintf (LOG_FILE, "Ошибка: неправильный аргумент = %s\n", source->textArray[i]);
+    }
 
     return 0;
 }
 
-int BinaryRecordind (int position, char* codeArray)
+int BinaryRecordind (struct Compiler* source)
 {
-    FILE* file = fopen ("code2.bin", "wb");
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
 
-    if (file == NULL) {
-        perror ("Не удается открыть файл");
+    FILE* file = fopen ("../assets/code2.bin", "wb");
+    assert(file != nullptr);
+
+    if (ValidationFile(file) != 0)
+    {
         return 1;
     }
 
-    size_t elements_written1 = fwrite (&position, sizeof (int), 1, file);
+    size_t elements_written1 = fwrite (&source->position, sizeof (int), 1, file);
     if (elements_written1 != 1)
     {
-        perror ("Ошибка при записи в файл");
-        fclose (file);
-        return 1;
+        HANDLE_ERROR("Ошибка при записи в файл position");
     }
 
-    size_t elements_written = fwrite (codeArray, sizeof (uint8_t), position, file);
+    size_t elements_written = fwrite (source->codeArray, sizeof (int), source->position, file);
 
-    if (elements_written != position) {
-        perror ("Ошибка при записи в файл");
-        fclose (file);
-        return 1;
-    }
-
-    fclose (file);
-
-    file = fopen ("../assets/code2.bin", "rb");
-
-    fprintf (LOG_FILE, "ИЗ ДВОИЧНОГО ФАЙЛА\n");
-    for (int i = 0; i < position; i++)
+    if (elements_written != source->position)
     {
-        fprintf (LOG_FILE, "%d - %08X\n", i, codeArray[i]);
+        HANDLE_ERROR("Ошибка при записи в файл codeArray");
     }
 
     fclose (file);
-
     return 0;
 }
 
-void CheckingSignatureAndVersion (FILE* inputFile)
+int ValidationFile(FILE* file)
 {
-    char command[256] = "";
-
-    if (fscanf (inputFile, "%s", command) != EOF && strcmp (command, "moss") != 0)
+    if (file == NULL)
     {
-        printf ("НЕ ТВОЙ ИСХОДНИК\n");
-        exit (1);
+        perror("Не удается открыть файл\n");
+        return 1;
     }
-
-    if (fscanf (inputFile, "%s", command) != EOF && strcmp (command, "VERSION2") != 0)
-    {
-        printf ("НЕ ТА ВЕРСИЯ\n");
-        exit (1);
-    }
+    return 0;
 }
 
-void CommandPrintout (int position, char* codeArray)
+void CommandPrintout (struct Compiler* source)
 {
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
     fprintf (LOG_FILE, "МАССИВ КОМАНД\n");
-    for (int i = 0; i < position; i++)
+    for (int i = 0; i < source->position; i++)
     {
-        fprintf (LOG_FILE, "%d - %d\n", i, codeArray[i]);
+        fprintf (LOG_FILE, "%d - %d\n", i, source->codeArray[i]);
     }
 }
 
-void PrintBinary (int position, char* codeArray)
+void ResolveUnknownMarks (struct Compiler* source)
 {
-    for (int i = 0; i < position; i++)
+    int countWhile = 0;
+
+    while (source->unknownMarks[countWhile] != -1)
     {
-        fprintf(LOG_FILE, "Address: %p, Value: %08X\n", (void*)&codeArray[i], (unsigned int)codeArray[i]);
+        int unknown = source->textArray[source->unknownMarks[countWhile]][1] - '0';
+        countWhile++;
+        source->codeArray[source->unknownMarks[countWhile]] = source->labels[unknown];
+
+        countWhile++;
     }
 }
+
+void InitializationUnknownMarks (struct Compiler* source)
+{
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
+    for (int i = 0; i < 10; i++)
+    {
+        source->unknownMarks[i] = -1;
+    }
+}
+
+void InitializationLabels (struct Compiler* source)
+{
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
+    for (int i = 0; i < MAX_SIZE_REG; i++)
+    {
+        source->labels[i] = -1;
+    }
+}
+
+void EnsureCapacity(struct Compiler *source)
+{
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
+    if (source->position >= source->capacity)
+    {
+        source->capacity *= 2;
+        int *newCodeArray = (int *)realloc(source->codeArray, source->capacity * sizeof(int));
+        if (newCodeArray == NULL) {
+            fprintf(stderr, "Ошибка: Не удалось выделить память для codeArray\n");
+            exit(1);
+        }
+        source->codeArray = newCodeArray;
+    }
+}
+
+void PrintTextArray(struct Compiler *source)
+{
+    for (int i = 0; i < source->words; i++)
+    {
+        fprintf(LOG_FILE, "%d = %s and %d\n", i, source->textArray[i], strlen(source->textArray[i]));
+    }
+}
+
 

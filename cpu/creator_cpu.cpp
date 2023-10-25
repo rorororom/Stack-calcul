@@ -2,52 +2,53 @@
 #include <assert.h>
 
 #include "creator_cpu.h"
-#include "log_funcs.h"
+#include "../common/log_funcs.h"
+#include "../common/const.h"
 
-void CpuCtor(struct Cpu* myCpu, struct Stack* myStack) {
-    assert(myCpu != NULL);
+void CpuCtor(struct Cpu* source, struct Stack* myStack) {
+    assert(source != NULL);
     assert(myStack != NULL);
 
-    myCpu->myStack = *myStack;
+    source->myStack = *myStack;
 
-    myCpu->codeArray = (char*)calloc(MAXSIZE, sizeof(char));
-    myCpu->codeRegister = (int*)calloc(MAX_SIZE_REG, sizeof(int));
+    source->codeArray = (char*)calloc(MAXSIZE, sizeof(char));
+    source->codeRegister = (int*)calloc(MAX_SIZE_REG, sizeof(int));
 
-    myCpu->filename = "machine_code.txt";
-    myCpu->outputfile = NULL;
+    source->filename = "../assets/code2.txt";
+    source->outputfile = NULL;
 }
 
 
-void CpuDtor (struct Cpu* myCpu)
+void CpuDtor (struct Cpu* source)
 {
-    StackDtor (&myCpu->myStack);
+    StackDtor (&source->myStack);
 
-    myCpu->filename = NULL;
-    myCpu->outputfile = NULL;
+    source->filename = NULL;
+    source->outputfile = NULL;
 
-    free (myCpu->codeArray);
-    myCpu->codeArray = NULL;
+    free (source->codeArray);
+    source->codeArray = NULL;
 
-    free (myCpu->codeRegister);
-    myCpu->codeRegister = NULL;
+    free (source->codeRegister);
+    source->codeRegister = NULL;
 }
 
-int CpuVerify (struct Cpu* myCpu)
+int CpuVerify (struct Cpu* source)
 {
     int cnt_errors = 0;
-    if (myCpu->codeArray == NULL)
+    if (source->codeArray == NULL)
     {
         cnt_errors = cnt_errors | ERROR_CODE_ARRAY_BIT;
     }
-    if (myCpu->outputfile == NULL)
+    if (source->outputfile == NULL)
     {
         cnt_errors = cnt_errors | ERROR_OUTPUTFILE_BIT;
     }
-    if (myCpu->codeRegister == NULL)
+    if (source->codeRegister == NULL)
     {
         cnt_errors = cnt_errors | ERROR_CODE_REGISTER_BIT;
     }
-    if (myCpu->filename == NULL)
+    if (source->filename == NULL)
     {
         cnt_errors = cnt_errors | ERROR_FILENAME_BIT;
     }
@@ -56,14 +57,9 @@ int CpuVerify (struct Cpu* myCpu)
 }
 
 
-void CpuDump (struct Cpu* myCpu)
+void CpuDump (struct Cpu* source)
 {
     fprintf(LOG_FILE, "CPU Dump:\n");
 
-    for (int i = 1; i < 2; i++)
-    {
-        fprintf (LOG_FILE, "%d = %d\n", i, myCpu->codeRegister[i]);
-    }
-
-    fprintf(LOG_FILE, "     Filename: %s\n", myCpu->filename);
+    fprintf(LOG_FILE, "     Filename: %s\n", source->filename);
 }

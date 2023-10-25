@@ -14,11 +14,17 @@ CXXFLAGS =  -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-
 			-fstack-protector -fstrict-overflow -fno-omit-frame-pointer -Wlarger-than=8192         \
 			-Wstack-usage=8192 -fPIE -Werror=vla
 COMMON_DIR = ../common
-SOURCES = main.cpp compiler.cpp
+SOURCES = main.cpp read_file_in_buffer.cpp compiler.cpp
 OUT_SOURCES = ../common/log_funcs.cpp
-OBJECTS = $(SOURCES:%.cpp=%.o)
-OUT_OBJECTS = $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=%.o)
-EXECUTABLE = main.out
+EXECUTABLE = compiler.out
+
+OBJ_DIR = obj
+
+OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:%.cpp=%.o))
+OUT_OBJECTS = $(addprefix $(OBJ_DIR)/, $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=%.o))
+
+ERR_DIR = errors
+ERROR_FILES = $(SOURCES:%.cpp=$(ERR_DIR)/%.err)
 
 .PHONY: all clean
 
@@ -27,12 +33,17 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) $(OUT_OBJECTS)
 	$(CXX) $^ -o $@ $(CXXFLAGS)
 
-%.o: $(COMMON_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(COMMON_DIR)/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
-%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
+
+$(ERR_DIR):
+	mkdir -p $(ERR_DIR)
+
+$(ERR_DIR)/%.err: %.cpp
+	$(CXX) -c $< -o /dev/null $(CXXFLAGS) 2> $@
 
 clean:
-	rm -f $(EXECUTABLE) $(OBJECTS) $(OUT_OBJECTS)
-
+	rm -rf $(EXECUTABLE) $(OBJ_DIR) $(ERR_DIR)

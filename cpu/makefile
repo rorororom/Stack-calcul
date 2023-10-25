@@ -1,5 +1,5 @@
 CXX = g++-13
-EXECUTABLE = cpu
+EXECUTABLE = cp
 CXXFLAGS =  -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations \
 			-Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts       \
 			-Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal  \
@@ -12,29 +12,27 @@ CXXFLAGS =  -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-
 			-Wvariadic-macros -Wno-literal-suffix -Wno-missing-field-initializers -Wno-narrowing   \
 			-Wno-old-style-cast -Wno-varargs -Wstack-protector -fcheck-new -fsized-deallocation    \
 			-fstack-protector -fstrict-overflow -fno-omit-frame-pointer -Wlarger-than=8192         \
-			-Wstack-usage=8192 -fPIE -Werror=vla
+			-Wstack-usage=8192 -fsanitize=address -fsanitize=undefined -fPIE -Werror=vla
 COMMON_DIR = ../common
 SOURCES = main.cpp stack.cpp cpu.cpp creator_cpu.cpp
 OUT_SOURCES = ../common/log_funcs.cpp ../common/error_func.cpp
-# OBJECTS = $(SOURCES:%.cpp=$(OBJECTS_DIR)/%.o)
-# OUT_OBJECTS = $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=$(OBJECTS_DIR)/%.o)
+OBJECTS = $(SOURCES:%.cpp=%.o)
+OUT_OBJECTS = $(OUT_SOURCES:$(COMMON_DIR)/%.cpp=%.o)
+EXECUTABLE = cpu.out
 
-.PHONY: all
+.PHONY: all clean
+
 all: $(EXECUTABLE)
 
-# $(EXECUTABLE): $(OBJECTS) $(OUT_OBJECTS)
-# 	$(CXX) $^ -o $@ $(CXXFLAGS)
+$(EXECUTABLE): $(OBJECTS) $(OUT_OBJECTS)
+	$(CXX) $^ -o $@ $(CXXFLAGS)
 
-# $(OBJECTS_DIR)/%.o: $(COMMON_DIR)/%.cpp
-# 	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
-#
-# $(OBJECTS_DIR)/%.o: %.cpp
-# 	$(CXX)  -c $^ -o $@ $(CXXFLAGS)
+%.o: $(COMMON_DIR)/%.cpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
-.PHONY: clean makedirs test
+%.o: %.cpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 clean:
-	rm -rf $(EXECUTABLE) $(OBJECTS_DIR)/*.o *.o
-	rm -rf *.log
-
+	rm -f $(EXECUTABLE) $(OBJECTS) $(OUT_OBJECTS)
 

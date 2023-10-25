@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "log_funcs.h"
-#include "stack.h"
+#include "../cpu/stack.h"
 #include "error_func.h"
 
 void PrintStackErrors(int sum_errors)

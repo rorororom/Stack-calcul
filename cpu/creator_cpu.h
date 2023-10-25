@@ -2,24 +2,14 @@
 #define CREATOR_CPU
 
 #include "../cpu/stack.h"
+#include "../common/const.h"
 #include <stdio.h>
 
-#define CPU_VERIFY(myCpu) {         \
-    if (CpuVerify (myCpu) > 0) {    \
-        CPU_DUMP (myCpu);           \
+#define CPU_VERIFY(source) {         \
+    if (CpuVerify (source) > 0) {    \
+        CPU_DUMP (source);           \
     }                               \
 }
-
-#define DEF_CMD(name, num, ...)     \
-        CMD_##name = num,
-
-enum Commands
-{
-    #include "../common/commands.h"
-};
-
-#undef DEF_CMD
-
 
 enum CpuErrors {
     ERROR_FILENAME_BIT        = 1,
@@ -36,10 +26,10 @@ struct Cpu {
     int* codeRegister;
 };
 
-void CpuCtor (struct Cpu* myCpu, struct Stack* myStack);
-void CpuDtor (struct Cpu* myCpu);
-void CpuDump (struct Cpu* myCpu);
+void CpuCtor (struct Cpu* source, struct Stack* myStack);
+void CpuDtor (struct Cpu* source);
+void CpuDump (struct Cpu* source);
 
-int CpuVerify (struct Cpu* myCpu);
+int CpuVerify (struct Cpu* source);
 
 #endif

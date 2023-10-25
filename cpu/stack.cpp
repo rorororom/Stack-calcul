@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "log_funcs.h"
+#include "../common/log_funcs.h"
 #include "stack.h"
 
 #define CAPACITY 1000
@@ -17,7 +17,6 @@ void StackCtor(struct Stack* myStack) {
 
 void StackPush(struct Stack* myStack, Elem_t value) {
     if (myStack->size >= myStack->capacity) {
-        // Если стек заполнился, увеличиваем его размер
         myStack->capacity *= UP_KOEF;
         myStack->data = (Elem_t*)realloc(myStack->data, sizeof(Elem_t) * myStack->capacity);
     }
@@ -25,7 +24,7 @@ void StackPush(struct Stack* myStack, Elem_t value) {
 }
 
 Elem_t StackPop(struct Stack* myStack) {
-    assert(myStack->size > 0);  // Убедимся, что стек не пуст
+    assert(myStack->size > 0);
 
     Elem_t value = myStack->data[--myStack->size];
     return value;
@@ -60,7 +59,6 @@ void StackDtor(struct Stack* myStack) {
 }
 
 void StackRealloc(struct Stack* myStack, float koef_capacity) {
-    // Пример уменьшения размера стека при необходимости
     if (myStack->size < (myStack->capacity) / DOWN_KOEF) {
         myStack->capacity *= DOWN_KOEF;
         myStack->data = (Elem_t*)realloc(myStack->data, sizeof(Elem_t) * myStack->capacity);
@@ -72,7 +70,18 @@ int GetSizeStack (struct Stack* myStack)
     return myStack->size;
 }
 
-
+Elem_t StackTop(const struct Stack* myStack)
+{
+    if (myStack->size > 0)
+    {
+        return myStack->data[myStack->size - 1];
+    }
+    else
+    {
+        printf("Стек пуст. Невозможно получить верхний элемент.\n");
+        exit(1);
+    }
+}
 
 
 

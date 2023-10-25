@@ -142,4 +142,6 @@ Elem_t * PointerRightCanary (struct Stack* myStack);
 
 int GetSizeStack (struct Stack* myStack);
 
+Elem_t StackTop(const struct Stack* myStack);
+
 #endif
