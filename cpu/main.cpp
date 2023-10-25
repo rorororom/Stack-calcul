@@ -7,67 +7,51 @@
 #include "../common/log_funcs.h"
 #include "../common/const.h"
 
-int readIntFromFile(FILE* file, int* value, size_t size, size_t count);
-
-int main ()
+int main()
 {
-    OpenLogFile ("LOGE.log", "w");
+    OpenLogFile("LOGE.log", "w");
 
     Stack myStack = {};
-    StackCtor (&myStack);
-    STACK_DUMP (&myStack);
+    StackCtor(&myStack);
+    STACK_DUMP(&myStack);
 
     struct Cpu source = {};
-    CpuCtor (&source, &myStack);
-    CPU_DUMP (&source);
-
-    int code = 0;
-    FILE* file = fopen("../common/code2.bin", "rb");
+    CpuCtor(&source, &myStack);
+    CPU_DUMP(&source);
 
     int position = 0;
+    FILE* file = fopen("../assets/code2.bin", "rb");
 
-    if (fread(&position, sizeof(int), 1, file) != 1)
+    if (file == NULL)
     {
-        perror("!Ошибка при чтении из файла");
-        fclose(file);
-        return 1;
+        HANDLE_ERROR("Ошибка при открытии файла");
     }
 
-    char* codeArray = (char*)calloc(position, sizeof(char));
-
-    if (codeArray == NULL)
+    if (fread(&source.position, sizeof(int), 1, file) != 1)
     {
-        perror("Не удается выделить память");
         fclose(file);
-        return 1;
+        HANDLE_ERROR("Ошибка при чтении числа position из файла");
     }
 
-    printf("position = %d\n", position);
+    printf("position = %d\n", source.position);
 
-    if (fread(codeArray, sizeof(char), position, file) != position)
+    if (fread(source.codeArray, sizeof(int), source.position, file) != source.position)
     {
-        perror("Ошибка при чтении из файла");
-        free(codeArray);
         fclose(file);
-        return 1;
+        free(source.codeArray);
+        HANDLE_ERROR("Ошибка при чтении массива codeArray из файла");
     }
-
-    CommandPrintout (position, codeArray);
 
     fclose(file);
-    CommandPrintout (position, codeArray);
+    STACK_DUMP(&myStack);
+    CommandPrintout(&source);
 
-    ProcesscodeArray(&source, codeArray, position);
+    ProcesscodeArray(&source);
+//     //CPU_DUMP(&source);  // Добавлен вывод состояния Cpu после обработки.
+//
+//     CpuDtor(&source);  // Вызываем деструктор Cpu.
+//     StackDtor(&myStack);  // Вызываем деструктор Stack.
 
     return 0;
 }
 
-int readIntFromFile(FILE* file, int* value, size_t size, size_t count)
-{
-    if (fread(value, size, count, file) != count)
-    {
-        perror("!Ошибка при чтении из файла");
-        return 0;
-    }
-    return 1;
-}

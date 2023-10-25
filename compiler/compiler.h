@@ -77,4 +77,6 @@ void InitializationLabels (struct Compiler* source);
 void InitializationUnknownMarks (struct Compiler* source);
 
 int ValidationFile(FILE* file);
+
+void DestroyCompiler(struct Compiler *source);
 #endif

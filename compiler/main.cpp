@@ -28,7 +28,7 @@ int main ()
 
     MainFuncReadFile(&source);
 
-    PrintTextArray(source);
+    PrintTextArray(&source);
 
     FILE* outputfile = fopen ("../assets/machine_code.txt", "w");
     if (ValidationFile(outputfile) != 0)
@@ -45,6 +45,8 @@ int main ()
     BinaryRecordind (&source);
 
     fclose (outputfile);
+
+    DestroyCompiler(&source);
     return 0;
 }
 

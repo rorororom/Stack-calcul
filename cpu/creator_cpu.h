@@ -18,12 +18,44 @@ enum CpuErrors {
     ERROR_CODE_REGISTER_BIT   = 1 << 4,
 };
 
+#define CONDITIONAL_JUMP(cmd_name, cmd_number, condition)   \
+    DEF_CMD(cmd_name, cmd_number, 1,                        \
+    {                                                       \
+        int number1 = StackPop(&source->myStack);           \
+        int number2 = StackPop(&source->myStack);           \
+        if (condition)                                      \
+        {                                                   \
+            i++;                                            \
+        }                                                   \
+        else                                                \
+        {                                                   \
+            i = source->codeArray[i+1] - 1;                         \
+        }                                                   \
+    })
+
+#define DEF_CMD(name, num, ...)                             \
+        CMD_##name = num,
+
+enum Commands
+{
+    #include "../common/commands.h"
+};
+
+#undef DEF_CMD
+
+enum Register
+{
+    RAX = 1,
+    RBX,
+    RCX,
+};
+const int SIZEREGISTER = 4;
+
 struct Cpu {
+    int* codeArray;
+    int position;
+    int codeRegister[SIZEREGISTER];
     struct Stack myStack;
-    const char* filename;
-    FILE* outputfile;
-    char* codeArray;
-    int* codeRegister;
 };
 
 void CpuCtor (struct Cpu* source, struct Stack* myStack);

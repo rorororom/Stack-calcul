@@ -236,4 +236,30 @@ void PrintTextArray(struct Compiler *source)
     }
 }
 
+void DestroyCompiler(struct Compiler *source)
+{
+    if (source == NULL)
+    {
+        return;
+    }
+
+    if (source->buffer != NULL)
+    {
+        free(source->buffer);
+        source->buffer = NULL;
+    }
+
+    if (source->codeArray != NULL)
+    {
+        free(source->codeArray);
+        source->codeArray = NULL;
+    }
+
+    source->size = -1;
+    source->words = -1;
+    source->cntUnknownMarks = -1;
+    source->position = -1;
+    source->capacity = -1;
+}
+
 

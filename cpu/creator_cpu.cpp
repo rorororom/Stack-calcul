@@ -5,33 +5,34 @@
 #include "../common/log_funcs.h"
 #include "../common/const.h"
 
-void CpuCtor(struct Cpu* source, struct Stack* myStack) {
+void CpuCtor(struct Cpu* source, struct Stack* myStack)
+{
     assert(source != NULL);
     assert(myStack != NULL);
 
     source->myStack = *myStack;
 
-    source->codeArray = (char*)calloc(MAXSIZE, sizeof(char));
-    source->codeRegister = (int*)calloc(MAX_SIZE_REG, sizeof(int));
-
-    source->filename = "../assets/code2.txt";
-    source->outputfile = NULL;
+    source->codeArray = (int*)calloc(MAXSIZE, sizeof(int));
+    source->codeRegister[3] = {0};
 }
 
 
-void CpuDtor (struct Cpu* source)
-{
-    StackDtor (&source->myStack);
+void CpuDtor(struct Cpu* source) {
+    if (source != NULL) {
+        if (source->codeArray != NULL) {
+            free(source->codeArray);
+            source->codeArray = NULL;
+        }
 
-    source->filename = NULL;
-    source->outputfile = NULL;
+        StackDtor(&(source->myStack));
 
-    free (source->codeArray);
-    source->codeArray = NULL;
-
-    free (source->codeRegister);
-    source->codeRegister = NULL;
+        source->position = 0;
+        for (int i = 0; i < SIZEREGISTER; i++) {
+            source->codeRegister[i] = 0;
+        }
+    }
 }
+
 
 int CpuVerify (struct Cpu* source)
 {
@@ -40,26 +41,26 @@ int CpuVerify (struct Cpu* source)
     {
         cnt_errors = cnt_errors | ERROR_CODE_ARRAY_BIT;
     }
-    if (source->outputfile == NULL)
-    {
-        cnt_errors = cnt_errors | ERROR_OUTPUTFILE_BIT;
-    }
     if (source->codeRegister == NULL)
     {
         cnt_errors = cnt_errors | ERROR_CODE_REGISTER_BIT;
-    }
-    if (source->filename == NULL)
-    {
-        cnt_errors = cnt_errors | ERROR_FILENAME_BIT;
     }
 
     return cnt_errors;
 }
 
 
-void CpuDump (struct Cpu* source)
+void CpuDump(struct Cpu* source)
 {
     fprintf(LOG_FILE, "CPU Dump:\n");
 
-    fprintf(LOG_FILE, "     Filename: %s\n", source->filename);
+    for (int i = 0; i < source->position; i++)
+    {
+        fprintf(LOG_FILE, "%d = %d", i, source->codeArray[i]);
+    }
+
+    for (int i = 0; i < SIZEREGISTER; i++)
+    {
+        fprintf(LOG_FILE, "%d = %d", i, source->codeRegister[i]);
+    }
 }

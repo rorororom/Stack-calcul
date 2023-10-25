@@ -7,21 +7,8 @@
 #include "creator_cpu.h"
 #include "cpu.h"
 #include "../common/log_funcs.h"
-#include "../compiler/compiler.h"
 #include "../common/const.h"
 #include "stack.h"
-
-#define POP_REGISTER_VALUE(cpu)                               \
-    StackPop(&source->myStack);                                \
-    break;
-
-void ProcesscodeArray (struct Cpu* source, char* codeArray, int position)
-{
-    assert (source != NULL);
-    assert (codeArray != NULL);
-
-    int value = 0, code_arg = 0, startCode = 0, code = 0;
-    int i = 0, number1 = 0, number2 = 0;
 
 #define DEF_CMD(name, num, has_arg, code)                     \
     case CMD_##name:                                          \
@@ -29,21 +16,27 @@ void ProcesscodeArray (struct Cpu* source, char* codeArray, int position)
         i++;                                                  \
         break;
 
-    while (i < position)
+void ProcesscodeArray(struct Cpu* source) {
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
+
+    int value = 0, code_arg = 0, startCode = 0, code = 0;
+    int i = 0, number1 = 0, number2 = 0, exponent = 0, base = 0, result = 0;
+
+    while (i < source->position)
     {
-        startCode = codeArray[i];
+        startCode = source->codeArray[i];
         code = startCode & 31;
 
-        int exponent = 0, base = 0, result = 0;
+        //printf ("%d\n", startCode);
+        // printf ("%d\n", code);
 
         if (startCode == -1)
         {
-            fclose(source->outputfile);
             break;
         }
 
-        switch (code)
-        {
+        switch (code) {
             #include "../common/commands.h"
 
             default:
@@ -51,7 +44,6 @@ void ProcesscodeArray (struct Cpu* source, char* codeArray, int position)
                 i++;
                 break;
         }
-        #undef DEF_CMD
     }
 }
 
@@ -90,37 +82,14 @@ int CheckStackSizeForOperation (struct Stack* myStack)
     return 1;
 }
 
-void ArifmeticCommand (struct Cpu* source, int code)
+void CommandPrintout(struct Cpu* source)
 {
-    assert (source != NULL);
+    assert(source != NULL);
+    assert(source->codeArray != NULL);
 
-    Elem_t number1 = 0, number2 = 0;
-
-    if (CheckStackSizeForOperation(&source->myStack))
-    {
-        number1 = StackPop(&source->myStack);
-        number2 = StackPop(&source->myStack);
-    }
-}
-
-void CommandPrintout (int position, char* codeArray)
-{
-    assert (codeArray != NULL);
-
-    fprintf (LOG_FILE, "МАССИВ КОМАНД\n");
-    for (int i = 0; i < position; i++)
-    {
-        fprintf (LOG_FILE, "%d - %d\n", i, codeArray[i]);
-    }
-}
-
-void PrintBinary (int position, char* codeArray)
-{
-    assert (codeArray != NULL);
-
-    for (int i = 0; i < position; i++)
-    {
-        fprintf(LOG_FILE, "Address: %p, Value: %08X\n", (void*)&codeArray[i], (unsigned int)codeArray[i]);
+    fprintf(LOG_FILE, "МАССИВ КОМАНД\n");
+    for (int i = 0; i < source->position; i++) {
+        fprintf(LOG_FILE, "%d - %d\n", i, source->codeArray[i]);
     }
 }
 
@@ -143,13 +112,17 @@ void PopArg (struct Cpu* source, int code)
     }
 }
 
-int ValidationFile(FILE* file)
-{
-    if (file == NULL)
-    {
-        perror("Не удается открыть файл\n");
-        return 1;
-    }
-    return 0;
-}
+
+// void ArifmeticCommand (struct Cpu* source, int code)
+// {
+//     assert (source != NULL);
+//
+//     Elem_t number1 = 0, number2 = 0;
+//
+//     if (CheckStackSizeForOperation(&source->myStack))
+//     {
+//         number1 = StackPop(&source->myStack);
+//         number2 = StackPop(&source->myStack);
+//     }
+// }
 

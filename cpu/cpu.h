@@ -10,17 +10,26 @@ typedef int Elem_t;
     char*: "%s" \
 )
 
+#define HANDLE_ERROR(message)                               \
+    perror(message);                                        \
+    fprintf(LOG_FILE, message);                             \
+    fclose(file);                                           \
+    return 1;
 
 #define CPU_DUMP(source) CpuDump(source);
 
+#define HANDLE_REGISTER(reg, index)             \
+    case reg:                                   \
+        return source->codeRegister[index];     \
+        break;
+
 int CheckStackSizeForOperation (struct Stack* myStack);
 Elem_t return_arg (struct Cpu* source, int code);
-void ProcesscodeArray (struct Cpu* source, char* codeArray, int position);
+void ProcesscodeArray (struct Cpu* source);
 void PopArg (struct Cpu* source, int code);
 
-void ArifmeticCommand (struct Cpu* source, int code);
+// void ArifmeticCommand (struct Cpu* source, int code);
 
-void CommandPrintout (int position, char* codeArray);
-void PrintBinary (int position, char* codeArray);
-int ValidationFile(FILE* file);
+void CommandPrintout (struct Cpu* source);
+void PrintBinary (struct Cpu* source);
 #endif

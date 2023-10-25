@@ -175,10 +175,8 @@ DEF_CMD(HLT,   -1, 0,
     {;})
 DEF_CMD(JMP,   22, 1,
 {
-    if ((startCode & (1 << 5)) != 0) {
-        int jump_to = source->codeArray[i+1];
-        i = jump_to - 1;
-    }
+    int jump_to = source->codeArray[i+1];
+    i = jump_to - 1;
 })
 
 CONDITIONAL_JUMP(JA, 23, number1 > number2)
